@@ -5,6 +5,7 @@ import aiohttp
 from aiohttp import ClientResponse
 
 from aiologger import Logger
+from aiologger.formatters.base import Formatter
 
 from typing import Optional, Dict, List, Union
 
@@ -55,7 +56,7 @@ class AsyncBot(object):
             parseMode: str = 'HTML',
             proxy: Optional[str] = None,
             lastEventId: int = 0,
-            pollTime: int = 10
+            pollTime: int = 30
     ):
 
         self.loop = asyncio.new_event_loop()
@@ -67,7 +68,16 @@ class AsyncBot(object):
         self.token: str = token
         self.proxy: str = proxy
 
-        self.logger = Logger.with_default_handlers(name='async-icq')
+        self.logger = Logger.with_default_handlers(
+            name='async-icq',
+            formatter=Formatter(
+                '%(asctime)s - '
+                '%(name)s - '
+                '%(levelname)s - '
+                '%(module)s:%(funcName)s:%(lineno)d - '
+                '%(message)s'
+            )
+        )
 
         self.running = True
         self.handlers: List = []
@@ -111,7 +121,7 @@ class AsyncBot(object):
                 params.pop(key)
 
         await self.logger.debug(
-            f'[GET] /bot/v1/{path} kwargs - {kwargs} ->'
+            f'[GET] /bot/v1/{path} params - {kwargs} ->'
         )
 
         response = await self.session.get(
@@ -760,6 +770,13 @@ class AsyncBot(object):
         except Exception as error:
             await self.logger.exception(error)
 
+    async def sync_handle_wrapper(self, handler, event: Event):
+
+        try:
+            handler(self, event)
+        except Exception as error:
+            await self.logger.exception(error)
+
     async def start_polling(self):
 
         while self.running:
@@ -780,32 +797,40 @@ class AsyncBot(object):
                 for event_ in events:
                     await self.logger.debug(event_)
                     for handler, event_type, cmd in self.handlers:
-                        if event_type == event_.type and cmd is None:
-                            tasks.append(
-                                self.handle_wrapper(
-                                    handler=handler,
-                                    event=event_
+                        if asyncio.iscoroutinefunction(handler):
+                            if event_type == event_.type and cmd is None:
+                                tasks.append(
+                                    self.handle_wrapper(
+                                        handler=handler,
+                                        event=event_
+                                    )
                                 )
-                            )
-                        elif cmd is not None \
-                                and event_type == EventType.NEW_MESSAGE \
-                                and event_type == event_.type \
-                                and event_.text.startswith(cmd):
-                            tasks.append(
-                                self.handle_wrapper(
-                                    handler=handler,
-                                    event=event_
+                            elif cmd is not None \
+                                    and event_type == EventType.NEW_MESSAGE \
+                                    and event_type == event_.type \
+                                    and event_.text.startswith(cmd):
+                                tasks.append(
+                                    self.handle_wrapper(
+                                        handler=handler,
+                                        event=event_
+                                    )
                                 )
-                            )
+                            else:
+                                await self.logger.debug(
+                                    f'Passing event: {event_.type} {event_.data}'
+                                )
                         else:
-                            await self.logger.debug(
-                                f'Passing event: {event_.data}'
+                            await self.logger.error(
+                                f'Added unsupported sync '
+                                f'handler: '
+                                f'{handler.__name__}'
+                                f'(bot: AsyncBot, event: Event)'
                             )
 
                 if tasks:
                     await asyncio.wait(tasks, timeout=0)
             except (asyncio.exceptions.TimeoutError, aiohttp.client_exceptions.ServerTimeoutError) as error:
-                await self.logger.exception(error)
+                await self.logger.error(error)
 
     def start_poll(self, threaded: bool = False):
 
