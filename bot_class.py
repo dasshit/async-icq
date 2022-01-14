@@ -797,39 +797,34 @@ class AsyncBot(object):
                 for event_ in events:
                     await self.logger.debug(event_)
                     for handler, event_type, cmd in self.handlers:
-                        if asyncio.iscoroutinefunction(handler):
-                            if event_type == event_.type and cmd is None:
-                                tasks.append(
-                                    self.handle_wrapper(
-                                        handler=handler,
-                                        event=event_
-                                    )
+                        if event_type == event_.type and cmd is None:
+                            tasks.append(
+                                self.handle_wrapper(
+                                    handler=handler,
+                                    event=event_
                                 )
-                            elif cmd is not None \
-                                    and event_type == EventType.NEW_MESSAGE \
-                                    and event_type == event_.type \
-                                    and event_.text.startswith(cmd):
-                                tasks.append(
-                                    self.handle_wrapper(
-                                        handler=handler,
-                                        event=event_
-                                    )
+                            )
+                        elif cmd is not None \
+                                and event_type == EventType.NEW_MESSAGE \
+                                and event_type == event_.type \
+                                and event_.text.startswith(cmd):
+                            tasks.append(
+                                self.handle_wrapper(
+                                    handler=handler,
+                                    event=event_
                                 )
-                            else:
-                                await self.logger.debug(
-                                    f'Passing event: {event_.type} {event_.data}'
-                                )
+                            )
                         else:
-                            await self.logger.error(
-                                f'Added unsupported sync '
-                                f'handler: '
-                                f'{handler.__name__}'
-                                f'(bot: AsyncBot, event: Event)'
+                            await self.logger.debug(
+                                f'Passing event: {event_.type} {event_.data}'
                             )
 
                 if tasks:
                     await asyncio.wait(tasks, timeout=0)
-            except (asyncio.exceptions.TimeoutError, aiohttp.client_exceptions.ServerTimeoutError) as error:
+            except (
+                    asyncio.exceptions.TimeoutError,
+                    aiohttp.client_exceptions.ServerTimeoutError
+            ) as error:
                 await self.logger.error(error)
 
     def start_poll(self, threaded: bool = False):
@@ -849,7 +844,12 @@ class AsyncBot(object):
 
     def add_handler(self, handler: List):
 
-        self.handlers.append(handler)
+        if asyncio.iscoroutinefunction(handler[0]):
+            self.handlers.append(handler)
+        else:
+            raise ValueError(
+                f'Added unsupported sync event handler: {handler[0].__name__}'
+            )
 
     def event_handler(self, event_type: EventType, cmd: Optional[str] = None):
 
