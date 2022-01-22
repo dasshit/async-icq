@@ -9,8 +9,9 @@
 name: Upload Python Package
 
 on:
-  release:
-    types: [published]
+  # Triggers the workflow on push or pull request events but only for the master branch
+  push:
+    branches: [ master ]
 
 jobs:
   deploy:
