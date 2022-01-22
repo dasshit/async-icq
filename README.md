@@ -7,7 +7,7 @@ Pure Async Python interface for Bot API.
 # Table of contents
 - [Introduction](#introduction)
 - [Quick start](#quick-start)
-- [Installing](#installing)\
+- [Installing](#installing)
 - [Examples](#examples)
 - [API description](#api-description)
 
