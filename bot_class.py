@@ -1,5 +1,6 @@
 import json
 import asyncio
+
 import aiohttp
 
 from aiohttp import ClientResponse
@@ -13,6 +14,8 @@ from threading import Thread
 
 from events import Event, EventType
 from helpers import InlineKeyboardMarkup, Format
+
+from middleware import BaseBotMiddleware
 
 
 def keyboard_to_json(
@@ -55,6 +58,7 @@ class AsyncBot(object):
             url: str = 'https://myteam.mail.ru',
             parseMode: str = 'HTML',
             proxy: Optional[str] = None,
+            middlewares: List[BaseBotMiddleware] = [],
             lastEventId: int = 0,
             pollTime: int = 30
     ):
@@ -81,6 +85,7 @@ class AsyncBot(object):
 
         self.running = True
         self.handlers: List = []
+        self.middlewares: List[BaseBotMiddleware] = middlewares
 
         self.lastEventId = lastEventId
         self.pollTime = pollTime
@@ -88,6 +93,8 @@ class AsyncBot(object):
         self.__polling_thread: Optional[Thread] = None
 
         self.loop.run_until_complete(self.start_session())
+
+        BaseBotMiddleware.bot = self
 
     async def start_session(self):
         """
@@ -777,6 +784,18 @@ class AsyncBot(object):
         except Exception as error:
             await self.logger.exception(error)
 
+    async def middleware_check(self, event_: Event):
+        for middleware in self.middlewares:
+            if event_.type in middleware.event_types:
+                if asyncio.iscoroutinefunction(middleware.check):
+                    result = await middleware.check(event_)
+                    if result:
+                        return True
+                else:
+                    if middleware.check(event_):
+                        return True
+        return False
+
     async def start_polling(self):
 
         while self.running:
@@ -796,6 +815,11 @@ class AsyncBot(object):
 
                 for event_ in events:
                     await self.logger.debug(event_)
+
+                    middleware_check = await self.middleware_check(event_)
+                    if middleware_check:
+                        continue
+
                     for handler, event_type, cmd in self.handlers:
                         if event_type == event_.type and cmd is None:
                             tasks.append(
