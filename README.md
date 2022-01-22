@@ -24,6 +24,11 @@ This library provides complete ICQ/Myteam Bot API 1.0 interface and requires Pyt
 
 # Installing
 
+Install using pip:
+```bash
+pip install -U async-icq
+```
+
 Install from sources:
 ```bash
 git clone https://github.com/mail-ru-im/bot-python.git
