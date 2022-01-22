@@ -1,6 +1,6 @@
 import json
 
-from constant import StyleType
+from .constant import StyleType
 
 
 class JsonSerializable(object):

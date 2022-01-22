@@ -1,6 +1,6 @@
-from events import EventType, Event
+from async_icq.events import EventType, Event
 
-from middleware import BaseBotMiddleware
+from async_icq.middleware import BaseBotMiddleware
 
 
 class AuthMiddleWare(BaseBotMiddleware):

@@ -2,21 +2,21 @@ import asyncio
 
 import random
 
-from bot_class import AsyncBot
-from events import Event
-from helpers import InlineKeyboardMarkup, KeyboardButton
+from async_icq.bot_class import AsyncBot
+from async_icq.events import Event
+from async_icq.helpers import InlineKeyboardMarkup, KeyboardButton
 
 from middleware_example import AuthMiddleWare
 
 
 testbot = AsyncBot(
     token='TOKEN',
-    url='https://api.icq.net',
+    url='https://api.internal.myteam.mail.ru',
     middlewares=[
         AuthMiddleWare(
             '1@chat.agent',
             '4231',
-            'test.user.1@vk.com',
+            'test.user.1@corp.mail.ru',
         )
     ],
 )

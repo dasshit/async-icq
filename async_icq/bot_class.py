@@ -12,10 +12,10 @@ from typing import Optional, Dict, List, Union
 
 from threading import Thread
 
-from events import Event, EventType
-from helpers import InlineKeyboardMarkup, Format
+from .events import Event, EventType
+from .helpers import InlineKeyboardMarkup, Format
 
-from middleware import BaseBotMiddleware
+from .middleware import BaseBotMiddleware
 
 
 def keyboard_to_json(
