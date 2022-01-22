@@ -8,8 +8,18 @@ with open("README.md", "r") as fh:
 
 # Определение requests как requirements для того, чтобы этот пакет работал.
 # Зависимости проекта.
-with open('requirements.txt', 'r') as fr:
-    requirements = fr.read().split('\n')
+requirements = [
+    "aiohttp>=3.8.1",
+    "aiologger>=0.6.1",
+    "aiosignal>=1.2.0",
+    "async-timeout>=4.0.2",
+    "attrs>=21.4.0",
+    "charset-normalizer>=2.0.10",
+    "frozenlist>=1.2.0",
+    "idna>=3.3",
+    "multidict>=5.2.0",
+    "yarl>=1.7.2"
+]
 
 # Функция, которая принимает несколько аргументов.
 # Она присваивает эти значения пакету.
