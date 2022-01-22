@@ -37,7 +37,12 @@ setuptools.setup(
     # Большинство проектов ссылаются на репозиторий.
     url="https://github.com/dasshit/async-icq",
     # Находит все пакеты внутри проекта и объединяет их в дистрибутив.
-    packages=setuptools.find_packages(exclude=["examples"]),
+    packages=setuptools.find_packages(
+        exclude=[
+            "examples",
+            ".github"
+        ]
+    ),
     # requirements или dependencies,
     # которые будут установлены вместе с пакетом,
     # когда пользователь установит его через pip.
