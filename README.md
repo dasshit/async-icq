@@ -41,8 +41,6 @@ python setup.py install
 Basic example of using this library will look like this
 
 ```python
-import random
-import asyncio
 from async_icq.bot import AsyncBot
 from async_icq.events import Event
 
