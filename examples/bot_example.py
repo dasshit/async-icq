@@ -11,7 +11,7 @@ from middleware_example import AuthMiddleWare
 
 testbot = AsyncBot(
     token='TOKEN',
-    url='https://api.internal.myteam.mail.ru',
+    url='https://api.icq.net',
     middlewares=[
         AuthMiddleWare(
             '1@chat.agent',
