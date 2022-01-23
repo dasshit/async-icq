@@ -81,8 +81,7 @@ class AsyncBot(object):
                 '%(levelname)s - '
                 '%(module)s:%(funcName)s:%(lineno)d - '
                 '%(message)s'
-            ),
-            level=LogLevel.INFO
+            )
         )
 
         self.running = True
