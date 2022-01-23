@@ -34,14 +34,10 @@ jobs:
         uses: tj-actions/changed-files@v13.1
         with:
           files: |
-            bot.py
-            constant.py
-            events.py
-            helpers.py
-            middleware.py
-            test_*.py
+            async_icq/*.py
+            tests/test_*.py
       - name: Run step if any of the listed files above change
-        if: steps.changed-files-specific.outputs.any_changed == 'false'
+        if: steps.changed-files-specific.outputs.any_changed != 'true'
         run: |
           echo "One or more files listed above has changed." & exit
       - name: Set up Python ${{ matrix.python-version }}
