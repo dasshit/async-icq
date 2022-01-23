@@ -17,19 +17,19 @@ class AuthMiddleWare(BaseBotMiddleware):
 
         await AuthMiddleWare.bot.logger.debug(f'Checking event: {event.data}')
 
-        if event.from_chat != self.chat_id:
+        if event.chat.chatId != self.chat_id:
             return False
 
-        if event.message_author['userId'] not in self.list:
+        if event.from_.userId not in self.list:
 
             if event.text == self.pwd:
 
-                self.list.add(event.message_author['userId'])
+                self.list.add(event.from_.userId)
 
                 return False
 
             await AuthMiddleWare.bot.delete_msg(
-                chatId=event.from_chat,
+                chatId=event.chat.chatId,
                 msgId=[event.msgId]
             )
 
@@ -38,15 +38,15 @@ class AuthMiddleWare(BaseBotMiddleware):
             text += '\n'.join([f'@[{user}]' for user in self.list])
 
             await AuthMiddleWare.bot.send_text(
-                chatId=event.message_author['userId'],
+                chatId=event.from_.userId,
                 text=text
             )
 
-            text = f'User @[{event.message_author["userId"]}] ' \
+            text = f'User @[{event.from_.userId}] ' \
                    f'isn\'t allowed to talk in this chat'
 
             await AuthMiddleWare.bot.send_text(
-                chatId=event.from_chat,
+                chatId=event.chat.chatId,
                 text=text
             )
 

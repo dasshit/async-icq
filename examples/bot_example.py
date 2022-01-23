@@ -50,7 +50,7 @@ async def hello(bot: AsyncBot, event: Event):
         )
 
         await bot.send_text(
-            chatId=event.from_chat,
+            chatId=event.chat.chatId,
             text=f'Test {timer} secs',
             inlineKeyboardMarkup=markup
         )
@@ -68,7 +68,7 @@ async def callback(bot: AsyncBot, event: Event):
 
     await bot.answer_callback_query(
         queryId=event.queryId,
-        text=event.callback_query
+        text=event.callbackData
     )
 
 
