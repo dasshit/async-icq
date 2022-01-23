@@ -22,7 +22,22 @@ async def prepare_bot():
 
 
 @pytest.mark.asyncio
-async def test_send_text(prepare_bot):
+@pytest.mark.parametrize(
+    'text', [
+        f'Hi, @[{ADMIN_CHAT_ID}]',
+        f'```Test, @[{ADMIN_CHAT_ID}]```',
+        '<code>def test():\n    pass</code>'
+    ],
+    ids=[
+        'mention',
+        'backtiks with mention',
+        'HTML-formatting'
+    ]
+)
+async def test_send_text(
+        prepare_bot,
+        text
+):
 
     response = await prepare_bot.send_text(
         chatId=ADMIN_CHAT_ID,
@@ -36,7 +51,22 @@ async def test_send_text(prepare_bot):
 
 
 @pytest.mark.asyncio
-async def test_send_text_with_keyboard(prepare_bot):
+@pytest.mark.parametrize(
+    'text', [
+        f'Hi, @[{ADMIN_CHAT_ID}]',
+        f'```Test, @[{ADMIN_CHAT_ID}]```',
+        '<code>def test():\n    pass</code>'
+    ],
+    ids=[
+        'mention',
+        'backtiks with mention',
+        'HTML-formatting'
+    ]
+)
+async def test_send_text_with_keyboard(
+        prepare_bot,
+        text
+):
 
     markup = InlineKeyboardMarkup()
 
