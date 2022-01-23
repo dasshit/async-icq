@@ -2,7 +2,7 @@ import asyncio
 
 import random
 
-from async_icq.bot_class import AsyncBot
+from async_icq.bot import AsyncBot
 from async_icq.events import Event
 from async_icq.helpers import InlineKeyboardMarkup, KeyboardButton
 

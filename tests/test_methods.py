@@ -1,6 +1,6 @@
 import os
 import pytest
-from async_icq.bot_class import AsyncBot
+from async_icq.bot import AsyncBot
 
 
 prepare_bot = AsyncBot(
@@ -13,6 +13,8 @@ ADMIN_CHAT_ID = os.getenv('ADMIN_CHAT_ID')
 
 @pytest.mark.asyncio
 async def test_send_text():
+
+    await prepare_bot.start_session()
 
     response = await prepare_bot.send_text(
         chatId=ADMIN_CHAT_ID,

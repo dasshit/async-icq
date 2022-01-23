@@ -43,14 +43,13 @@ Basic example of using this library will look like this
 ```python
 import random
 import asyncio
-from async_icq.bot_class import AsyncBot
+from async_icq.bot import AsyncBot
 from async_icq.events import Event
-
 
 # Creating bot
 example = AsyncBot(
-    token='TOKEN',
-    url='https://api.icq.net',
+  token='TOKEN',
+  url='https://api.icq.net',
 )
 
 
@@ -58,13 +57,12 @@ example = AsyncBot(
 # Diffent decorators will set it up for diffent types of events
 @example.start_handler()
 async def hello(bot: AsyncBot, event: Event):
+  await bot.send_text(
+    chatId=event.from_chat,
+    text=f'Hi, {event.message_author["userId"]}'
+  )
 
-    await bot.send_text(
-        chatId=event.from_chat,
-        text=f'Hi, {event.message_author["userId"]}'
-    )
-
-    await bot.logger.debug(f'Answered to {event.from_chat}')
+  await bot.logger.debug(f'Answered to {event.from_chat}')
 
 
 # Starting to poll new events and sending them to middleware and handlers
