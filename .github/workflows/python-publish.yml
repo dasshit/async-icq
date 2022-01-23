@@ -39,7 +39,7 @@ jobs:
       - name: Run step if any of the listed files above change
         if: steps.changed-files-specific.outputs.any_changed != 'true'
         run: |
-          echo "One or more files listed above has changed." & exit 1
+          echo "No files listed above has changed." & exit 1
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v1
         with:
