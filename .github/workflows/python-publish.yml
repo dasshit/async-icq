@@ -30,20 +30,20 @@ jobs:
         run: git checkout ${{ env.BRANCH }}
 
       - name: Get specific changed files
-          id: changed-files-specific
-          uses: tj-actions/changed-files@v13.1
-          with:
-            files: |
-              bot.py
-              constant.py
-              events.py
-              helpers.py
-              middleware.py
-              test_*.py
+        id: changed-files-specific
+        uses: tj-actions/changed-files@v13.1
+        with:
+          files: |
+            bot.py
+            constant.py
+            events.py
+            helpers.py
+            middleware.py
+            test_*.py
       - name: Run step if any of the listed files above change
-          if: steps.changed-files-specific.outputs.any_changed == 'true'
-          run: |
-            echo "One or more files listed above has changed." & exit
+        if: steps.changed-files-specific.outputs.any_changed == 'false'
+        run: |
+          echo "One or more files listed above has changed." & exit
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v1
         with:
