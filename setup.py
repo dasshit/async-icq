@@ -1,6 +1,8 @@
 # Импорт недавно установленного пакета setuptools.
 import setuptools
 
+from version_increaser import auto_version_increase
+
 import async_icq
 
 with open("README.md", "r") as fh:
@@ -31,7 +33,7 @@ setuptools.setup(
     name="async_icq",
     # Номер версии вашего пакета.
     # Обычно используется семантическое управление версиями.
-    version=async_icq.__version__,
+    version=auto_version_increase(),
     # Имя автора.
     author="Valerii Korobov",
     # Его почта.
