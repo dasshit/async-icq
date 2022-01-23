@@ -34,55 +34,39 @@ async def prepare_bot():
         'HTML-formatting'
     ]
 )
-async def test_send_text(
-        prepare_bot,
-        text
-):
-
-    response = await prepare_bot.send_text(
-        chatId=ADMIN_CHAT_ID,
-        text=f'Hi, @[{ADMIN_CHAT_ID}]'
-    )
-
-    resp_json = await response.json()
-
-    assert resp_json.get('msgId')
-    assert resp_json.get('ok')
-
-
-@pytest.mark.asyncio
 @pytest.mark.parametrize(
-    'text', [
-        f'Hi, @[{ADMIN_CHAT_ID}]',
-        f'```Test, @[{ADMIN_CHAT_ID}]```',
-        '<code>def test():\n    pass</code>'
+    'keyboard', [
+        True,
+        False
     ],
     ids=[
-        'mention',
-        'backtiks with mention',
-        'HTML-formatting'
+        'with keyboard',
+        'none keyboard'
     ]
 )
-async def test_send_text_with_keyboard(
-        prepare_bot,
-        text
+async def test_send_text(
+        prepare_bot: AsyncBot,
+        text: str,
+        keyboard: bool
 ):
+    if keyboard:
+        markup = InlineKeyboardMarkup()
 
-    markup = InlineKeyboardMarkup()
-
-    markup.row(
-        KeyboardButton(
-            text='Button URL',
-            url='https://mail.ru/'
+        markup.row(
+            KeyboardButton(
+                text='Button URL',
+                url='https://mail.ru/'
+            )
         )
-    )
 
-    markup.row(
-        KeyboardButton(
-            text='Button callback',
-            callbackData='button|callback'
+        markup.row(
+            KeyboardButton(
+                text='Button callback',
+                callbackData='button|callback'
+            )
         )
-    )
+    else:
+        markup = None
 
     response = await prepare_bot.send_text(
         chatId=ADMIN_CHAT_ID,
