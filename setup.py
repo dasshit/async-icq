@@ -11,10 +11,18 @@ def get_last_version():
     request = urllib.request.urlopen(
         "https://pypi.org/pypi/async-icq/json").read()
 
-    last_release = list(
-        json.loads(request).get('releases').keys())[-1]
+    last_releases = list(
+        json.loads(request).get('releases').keys())
 
-    return [int(i) for i in last_release.split('.')]
+    last_release = sorted([
+        [
+            int(i) for i in last_release.split('.')
+        ]
+        for last_release in last_releases
+    ])[-1]
+
+    return last_release
+
 
 
 def auto_version_increase():
