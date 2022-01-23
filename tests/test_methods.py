@@ -26,12 +26,14 @@ async def prepare_bot():
     'text', [
         f'Hi, @[{ADMIN_CHAT_ID}]',
         f'```Test, @[{ADMIN_CHAT_ID}]```',
-        '<code>def test():\n    pass</code>'
+        '<code>def test():\n    pass</code>',
+        f'<i>Test @[{ADMIN_CHAT_ID}]</i>'
     ],
     ids=[
         'mention',
         'backtiks with mention',
-        'HTML-formatting'
+        'HTML-code',
+        'HTML-italic'
     ]
 )
 @pytest.mark.parametrize(
