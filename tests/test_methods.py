@@ -1,5 +1,7 @@
 import os
 
+print(os.environ)
+
 import pytest
 
 from async_icq.bot_class import AsyncBot

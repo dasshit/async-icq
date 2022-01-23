@@ -38,7 +38,7 @@ jobs:
       - name: Installing test requirements
         run: pip install -r test_requirements.txt
       - name: Run unit tests
-        run: python -m pytest --asyncio-mode=strict --import-mode=append tests/
+        run: python -m pytest --asyncio-mode=strict --import-mode=append --verbose tests/
   deploy:
 
     runs-on: ubuntu-latest
