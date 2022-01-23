@@ -33,12 +33,12 @@ jobs:
         uses: actions/setup-python@v1
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Install dependencies
-          run: |
-            python -m pip install --upgrade pip
-            pip install -r test_requirements.txt
+      - name: Updating pip
+        run: python -m pip install --upgrade pip
+      - name: Installing test requirements
+        run: pip install -r test_requirements.txt
       - name: Run unit tests
-          run: python -m pytest --asyncio-mode=strict --import-mode=append tests/
+        run: python -m pytest --asyncio-mode=strict --import-mode=append tests/
   deploy:
 
     runs-on: ubuntu-latest
