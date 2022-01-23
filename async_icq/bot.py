@@ -106,9 +106,7 @@ class AsyncBot(object):
         self.session: aiohttp.ClientSession = aiohttp.ClientSession(
             base_url=self.url,
             raise_for_status=True,
-            read_timeout=40,
-            conn_timeout=4,
-
+            timeout=(4, 40)
         )
 
     async def get(self, path: str, **kwargs) -> ClientResponse:
