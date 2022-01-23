@@ -1,21 +1,28 @@
 import os
 import pytest
+import pytest_asyncio
 from async_icq.bot import AsyncBot
 from async_icq.helpers import InlineKeyboardMarkup, KeyboardButton
 
 
-prepare_bot = AsyncBot(
-        token=os.getenv('TOKEN'),
-        url=os.getenv('API_URL'),
+ADMIN_CHAT_ID = os.getenv('ADMIN_CHAT_ID')
+
+bot = AsyncBot(
+    token=os.getenv('TOKEN'),
+    url=os.getenv('API_URL'),
 )
 
-ADMIN_CHAT_ID = os.getenv('ADMIN_CHAT_ID')
+
+@pytest_asyncio.fixture
+async def prepare_bot():
+
+    await bot.start_session()
+
+    yield bot
 
 
 @pytest.mark.asyncio
-async def test_send_text():
-
-    await prepare_bot.start_session()
+async def test_send_text(prepare_bot):
 
     response = await prepare_bot.send_text(
         chatId=ADMIN_CHAT_ID,
@@ -29,9 +36,7 @@ async def test_send_text():
 
 
 @pytest.mark.asyncio
-async def test_send_text_with_keyboard():
-
-    await prepare_bot.start_session()
+async def test_send_text_with_keyboard(prepare_bot):
 
     markup = InlineKeyboardMarkup()
 
