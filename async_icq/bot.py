@@ -797,7 +797,10 @@ class AsyncBot(object):
         return False
 
     async def start_polling(self):
-
+        """
+        Функция поллинга и обработки событий
+        :return:
+        """
         while self.running:
 
             try:
@@ -852,7 +855,13 @@ class AsyncBot(object):
                 await self.logger.error(error)
 
     def start_poll(self, threaded: bool = False):
+        """
+        Перегрузка функции поллинга и обрабоки событий
+        :param threaded: выполнять функцию в основном потоке
 
+        или запустить побочный
+        :return:
+        """
         if threaded:
 
             self.__polling_thread = Thread(
@@ -867,7 +876,11 @@ class AsyncBot(object):
             self.loop.run_until_complete(self.start_polling())
 
     def add_handler(self, handler: List):
-
+        """
+        Функция добавления обработчика событий
+        :param handler:
+        :return:
+        """
         if asyncio.iscoroutinefunction(handler[0]):
             self.handlers.append(handler)
         else:
@@ -876,7 +889,12 @@ class AsyncBot(object):
             )
 
     def event_handler(self, event_type: EventType, cmd: Optional[str] = None):
-
+        """
+        Базовый декоратор для функции обработки события
+        :param event_type: ALL
+        :param cmd: ?
+        :return:
+        """
         def decorate(handler):
             self.add_handler([handler, event_type, cmd])
             return handler
@@ -961,7 +979,7 @@ class AsyncBot(object):
             cmd: Optional[str] = None
     ):
         """
-        Декоратор для функции обработки события закрепления события в чате
+        Декоратор для функции обработки события закрепления сообщения в чате
         :param event_type: тип события = EventType.PIN_MESSAGE
         :param cmd: -
         :return:
@@ -976,7 +994,12 @@ class AsyncBot(object):
             event_type: EventType = EventType.UNPINNED_MESSAGE,
             cmd: Optional[str] = None
     ):
-
+        """
+        Декоратор для функции обработки события открепления сообщения в чате
+        :param event_type: тип события = EventType.UNPIN_MESSAGE
+        :param cmd: -
+        :return:
+        """
         def decorate(handler):
             self.add_handler([handler, event_type, cmd])
             return handler
@@ -987,7 +1010,13 @@ class AsyncBot(object):
             event_type: EventType = EventType.NEW_CHAT_MEMBERS,
             cmd: Optional[str] = None
     ):
-
+        """
+        Декоратор для фукнции обработки
+        события добавления нового пользователя в чат
+        :param event_type: тип события = EventType.NEW_CHAT_MEMBERS
+        :param cmd: -
+        :return:
+        """
         def decorate(handler):
             self.add_handler([handler, event_type, cmd])
             return handler
@@ -998,7 +1027,12 @@ class AsyncBot(object):
             event_type: EventType = EventType.LEFT_CHAT_MEMBERS,
             cmd: Optional[str] = None
     ):
-
+        """
+        Декоратор для функции обработки события удаления пользователя из чата
+        :param event_type: тип события = EventType.LEFT_CHAT_MEMBERS
+        :param cmd: -
+        :return:
+        """
         def decorate(handler):
             self.add_handler([handler, event_type, cmd])
             return handler
@@ -1009,7 +1043,12 @@ class AsyncBot(object):
             event_type: EventType = EventType.CHANGED_CHAT_INFO,
             cmd: Optional[str] = None
     ):
-
+        """
+        Декоратор для функции обработки события обновления информации о чате
+        :param event_type: тип события = EventType.CHANGED_CHAT_INFO
+        :param cmd: -
+        :return:
+        """
         def decorate(handler):
             self.add_handler([handler, event_type, cmd])
             return handler
@@ -1020,7 +1059,12 @@ class AsyncBot(object):
             event_type: EventType = EventType.CALLBACK_QUERY,
             cmd: Optional[str] = None
     ):
-
+        """
+        Декоратор для функции обработки события клика по кнопке с коллбеком
+        :param event_type: тип события = EventType.CALLBACK_QUERY
+        :param cmd: -
+        :return:
+        """
         def decorate(handler):
             self.add_handler([handler, event_type, cmd])
             return handler
