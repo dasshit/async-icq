@@ -59,6 +59,7 @@ class AsyncBot(object):
             url: str = 'https://myteam.mail.ru',
             parseMode: str = 'HTML',
             proxy: Optional[str] = None,
+            log_level: LogLevel = LogLevel.INFO,
             middlewares: List[BaseBotMiddleware] = [],
             lastEventId: int = 0,
             pollTime: int = 30
@@ -81,7 +82,8 @@ class AsyncBot(object):
                 '%(levelname)s - '
                 '%(module)s:%(funcName)s:%(lineno)d - '
                 '%(message)s'
-            )
+            ),
+            level=log_level
         )
 
         self.running = True
