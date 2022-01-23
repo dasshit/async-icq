@@ -930,7 +930,7 @@ class AsyncBot(object):
     ):
         """
         Декоратор для функции обработки события редактирования сообщения
-        :param event_type:  тип события = EventType.NEW_MESSAGE
+        :param event_type:  тип события = EventType.EDIT_MESSAGE
         :param cmd: -
         :return:
         """
@@ -944,7 +944,12 @@ class AsyncBot(object):
             event_type: EventType = EventType.DELETED_MESSAGE,
             cmd: Optional[str] = None
     ):
-
+        """
+        Декоратор для функции обработки события удаления сообщения
+        :param event_type:   тип события = EventType.DELETE_MESSAGE
+        :param cmd: -
+        :return:
+        """
         def decorate(handler):
             self.add_handler([handler, event_type, cmd])
             return handler
