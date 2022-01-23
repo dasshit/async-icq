@@ -40,9 +40,9 @@ jobs:
         run: pip install -r test_requirements.txt
       - name: Run unit tests
         env:
-          TOKEN: ${{ unittests.TOKEN }}
-          API_URL: ${{ unittests.API_URL }}
-          ADMIN_CHAT_ID: ${{ unittests.ADMIN_CHAT_ID }}
+          TOKEN: ${{ env.TOKEN }}
+          API_URL: ${{ env.API_URL }}
+          ADMIN_CHAT_ID: ${{ env.ADMIN_CHAT_ID }}
         run: python -m pytest --asyncio-mode=strict --import-mode=append --verbose tests/
   deploy:
 
