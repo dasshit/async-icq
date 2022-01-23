@@ -15,7 +15,6 @@ on:
 
 jobs:
   tests:
-    environment: unittests
     strategy:
       matrix:
         python-version: [ 3.9.9 ]
@@ -40,9 +39,9 @@ jobs:
         run: pip install -r test_requirements.txt
       - name: Run unit tests
         env:
-          TOKEN: ${{ env.TOKEN }}
-          API_URL: ${{ env.API_URL }}
-          ADMIN_CHAT_ID: ${{ env.ADMIN_CHAT_ID }}
+          TOKEN: ${{ secrets.TOKEN }}
+          API_URL: ${{ secrets.API_URL }}
+          ADMIN_CHAT_ID: ${{ secrets.ADMIN_CHAT_ID }}
         run: python -m pytest --asyncio-mode=strict --import-mode=append --verbose tests/
   deploy:
 
