@@ -1,6 +1,7 @@
 import os
 import pytest
 import pytest_asyncio
+from typing import Optional
 from async_icq.bot import AsyncBot
 from async_icq.helpers import InlineKeyboardMarkup, KeyboardButton
 
@@ -46,11 +47,57 @@ async def prepare_bot():
         'none keyboard'
     ]
 )
+@pytest.mark.parametrize(
+    'fwd_or_reply', [
+        None,
+        'forward',
+        'reply'
+    ],
+    ids=[
+        'nothing',
+        'with forward',
+        'with reply'
+    ]
+)
 async def test_send_text(
         prepare_bot: AsyncBot,
         text: str,
-        keyboard: bool
+        keyboard: bool,
+        fwd_or_reply: str
 ):
+    replyMsgId = None
+    forwardChatId = None
+    forwardMsgId = None
+
+    if fwd_or_reply == 'forward':
+
+        forwardChatId = ADMIN_CHAT_ID
+
+        response = await prepare_bot.send_text(
+            chatId=ADMIN_CHAT_ID,
+            text='Forward Test'
+        )
+
+        resp_json = await response.json()
+
+        forwardMsgId = [
+            resp_json.get('msgId')
+        ]
+
+    elif fwd_or_reply == 'reply':
+        response = await prepare_bot.send_text(
+            chatId=ADMIN_CHAT_ID,
+            text='Forward Test'
+        )
+
+        resp_json = await response.json()
+
+        replyMsgId = [
+            resp_json.get('msgId')
+        ]
+    else:
+        forwardChatId = None
+
     if keyboard:
         markup = InlineKeyboardMarkup()
 
@@ -73,6 +120,9 @@ async def test_send_text(
     response = await prepare_bot.send_text(
         chatId=ADMIN_CHAT_ID,
         text=f'Hi, @[{ADMIN_CHAT_ID}]',
+        forwardMsgId=forwardMsgId,
+        forwardChatId=forwardChatId,
+        replyMsgId=replyMsgId,
         inlineKeyboardMarkup=markup
     )
 
@@ -80,3 +130,135 @@ async def test_send_text(
 
     assert resp_json.get('msgId')
     assert resp_json.get('ok')
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    'fileId', [
+        "02B6g000g9Fpjf1eRmkxju61eaec281bb",
+        "Q8Iq8cgZQIiiprKnuD86vk61eaed711bb",
+        "zfhqNk6SKLwc0KYLPgTBPX61eaf0641bb",
+        "y7ltdslLWscY1yiogtwFpx61eaee9e1bb",
+        "I0006XIfaT937afKh78ISw61eabec41bb",
+        "W51lurUgrOo8WjnGFJUPgs61e968121bb"
+    ],
+    ids=[
+        "image",
+        "ics",
+        "pdf",
+        "txt",
+        "ptt",
+        "log"
+    ]
+)
+@pytest.mark.parametrize(
+    "caption", [
+        None,
+        "test",
+        "<code>test</code>",
+        "```test```"
+    ],
+    ids=[
+        'without caption',
+        'basic caption',
+        'html-formatted caption',
+        'backtick-formatted caption'
+    ]
+)
+@pytest.mark.parametrize(
+    'keyboard', [
+        True,
+        False
+    ],
+    ids=[
+        'with keyboard',
+        'none keyboard'
+    ]
+)
+@pytest.mark.parametrize(
+    'fwd_or_reply', [
+        None,
+        'forward',
+        'reply'
+    ],
+    ids=[
+        'nothing',
+        'with forward',
+        'with reply'
+    ]
+)
+async def test_send_fileId(
+        prepare_bot: AsyncBot,
+        fileId: str,
+        caption: Optional[str],
+        keyboard: bool,
+        fwd_or_reply: str
+):
+    replyMsgId = None
+    forwardChatId = None
+    forwardMsgId = None
+
+    if fwd_or_reply == 'forward':
+
+        forwardChatId = ADMIN_CHAT_ID
+
+        response = await prepare_bot.send_text(
+            chatId=ADMIN_CHAT_ID,
+            text='Forward Test'
+        )
+
+        resp_json = await response.json()
+
+        forwardMsgId = [
+            resp_json.get('msgId')
+        ]
+
+    elif fwd_or_reply == 'reply':
+        response = await prepare_bot.send_text(
+            chatId=ADMIN_CHAT_ID,
+            text='Forward Test'
+        )
+
+        resp_json = await response.json()
+
+        replyMsgId = [
+            resp_json.get('msgId')
+        ]
+    else:
+        forwardChatId = None
+
+    if keyboard:
+        markup = InlineKeyboardMarkup()
+
+        markup.row(
+            KeyboardButton(
+                text='Button URL',
+                url='https://mail.ru/'
+            )
+        )
+
+        markup.row(
+            KeyboardButton(
+                text='Button callback',
+                callbackData='button|callback'
+            )
+        )
+    else:
+        markup = None
+
+    response = await prepare_bot.send_fileId(
+        chatId=ADMIN_CHAT_ID,
+        fileId=fileId,
+        forwardMsgId=forwardMsgId,
+        forwardChatId=forwardChatId,
+        replyMsgId=replyMsgId,
+        inlineKeyboardMarkup=markup
+    )
+
+    resp_json = await response.json()
+
+    assert resp_json.get('msgId')
+    assert resp_json.get('ok')
+
+
+
