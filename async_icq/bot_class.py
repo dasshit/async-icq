@@ -6,6 +6,7 @@ import aiohttp
 from aiohttp import ClientResponse
 
 from aiologger import Logger
+from aiologger.levels import LogLevel
 from aiologger.formatters.base import Formatter
 
 from typing import Optional, Dict, List, Union
@@ -80,7 +81,8 @@ class AsyncBot(object):
                 '%(levelname)s - '
                 '%(module)s:%(funcName)s:%(lineno)d - '
                 '%(message)s'
-            )
+            ),
+            level=LogLevel.INFO
         )
 
         self.running = True
