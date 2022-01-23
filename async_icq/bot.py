@@ -748,14 +748,21 @@ class AsyncBot(object):
             self,
             fileId: str
     ) -> ClientResponse:
-
+        """
+        Получение информации о файле по его fileId
+        :param fileId: ID файла
+        :return: информация о файле
+        """
         return await self.get(
             path="files/getInfo",
             fileId=fileId
         )
 
     async def get_events(self):
-
+        """
+        Метод для поллинга событий от Bit API
+        :return: Список событий
+        """
         response = await self.get(
             path="events/get",
             lastEventId=self.lastEventId,
