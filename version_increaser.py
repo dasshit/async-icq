@@ -1,13 +1,14 @@
-import requests
+import json
+import urllib.request
 
 
 def get_last_version():
-    last_release: str = list(
-        requests.get(
-            url='https://pypi.org/pypi/async-icq/json'
-        ).json().get(
-            'releases'
-        ).keys())[-1]
+
+    request = urllib.request.urlopen(
+        "https://pypi.org/pypi/async-icq/json").read()
+
+    last_release = list(
+        json.loads(request).get('releases').keys())[-1]
 
     return [int(i) for i in last_release.split('.')]
 
