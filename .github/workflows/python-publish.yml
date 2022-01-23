@@ -12,8 +12,6 @@ on:
   # Triggers the workflow on push or pull request events but only for the master branch
   push:
     branches: [ master ]
-    paths:
-      - 'async_icq'
 
 jobs:
   tests:
@@ -30,6 +28,15 @@ jobs:
 
       - name: Switch to Current Branch
         run: git checkout ${{ env.BRANCH }}
+
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v2.1
+      - name: Show modified files
+        run: echo '${{ steps.changed-files.outputs.modified_files }}'
+      - name: package files was changed
+        if: contains(steps.changed-files.outputs.modified_files, 'async_icq/*')
+        run: echo 'Files was changed'
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v1
