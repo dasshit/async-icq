@@ -87,7 +87,8 @@ setuptools.setup(
     packages=setuptools.find_packages(
         exclude=[
             "examples",
-            ".github"
+            ".github",
+            ".pytest_cache"
         ]
     ),
     # requirements или dependencies,
