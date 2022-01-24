@@ -620,7 +620,13 @@ class AsyncBot(object):
             chatId: str,
             cursor: Optional[str] = None
     ) -> ClientResponse:
-
+        """
+        Метод для получения списка пользователей чата
+        :param chatId: ID чата
+        :param cursor: курсор, используется если количество пользователей более
+         определенного лимита
+        :return: Список пользователей чата
+        """
         return await self.get(
             path="chats/getAdmins",
             chatId=chatId,
@@ -631,7 +637,11 @@ class AsyncBot(object):
             self,
             chatId: str,
     ) -> ClientResponse:
-
+        """
+        Метод для получения списка заблокированных пользователей в чате
+        :param chatId: ID чата
+        :return: Список заблокированных пользователей
+        """
         return await self.get(
             path="chats/getBlockedUsers",
             chatId=chatId,
@@ -641,7 +651,11 @@ class AsyncBot(object):
             self,
             chatId: str,
     ) -> ClientResponse:
-
+        """
+        Метод для получения списка пользователей, желающих вступить в чат
+        :param chatId: ID чата
+        :return: список пользователей
+        """
         return await self.get(
             path="chats/getPendingUsers",
             chatId=chatId,
@@ -653,7 +667,13 @@ class AsyncBot(object):
             userId: str,
             delLastMessages: bool = True
     ) -> ClientResponse:
-
+        """
+        Метод для блокировки пользователей в чате
+        :param chatId: ID чата
+        :param userId: ID пользователя
+        :param delLastMessages: удалять ли сообщения пользователя
+        :return: результат запроса
+        """
         return await self.get(
             path="chats/blockUser",
             chatId=chatId,
@@ -666,7 +686,12 @@ class AsyncBot(object):
             chatId: str,
             userId: str,
     ) -> ClientResponse:
-
+        """
+        Метод для разблокировки пользователя в чате
+        :param chatId: ID чата
+        :param userId: ID пользователя
+        :return: результат запроса
+        """
         return await self.get(
             path="chats/unblockUser",
             chatId=chatId,
@@ -680,7 +705,15 @@ class AsyncBot(object):
             userId: Optional[str] = None,
             everyone: bool = True
     ) -> ClientResponse:
-
+        """
+        Метод для одобрения вступления пользователя в чат
+        :param chatId: ID чата
+        :param approve: разрешить или запретить в вступление
+        :param userId: ID пользователя
+        :param everyone: Флаг для разрешения вступления всех пользователей что
+        хотят в чат вступить
+        :return: результат запроса
+        """
         if everyone:
             return await self.get(
                 path="chats/resolvePending",
@@ -702,7 +735,12 @@ class AsyncBot(object):
             chatId: str,
             title: str
     ) -> ClientResponse:
-
+        """
+        Метод для установки названия чата
+        :param chatId: ID чата
+        :param title: новое название
+        :return: результат запроса
+        """
         return await self.get(
             path="chats/setTitle",
             chatId=chatId,
@@ -714,7 +752,12 @@ class AsyncBot(object):
             chatId: str,
             about: str
     ) -> ClientResponse:
-
+        """
+        Метод для установки описания чата
+        :param chatId: ID чата
+        :param about: новое описание чата
+        :return: результат запроса
+        """
         return await self.get(
             path="chats/setAbout",
             chatId=chatId,
@@ -726,7 +769,12 @@ class AsyncBot(object):
             chatId: str,
             rules: str
     ) -> ClientResponse:
-
+        """
+        Метод для установки новых правил чата
+        :param chatId: ID чата
+        :param rules: новые правила чата
+        :return: результат запроса
+        """
         return await self.get(
             path="chats/setRules",
             chatId=chatId,
@@ -738,7 +786,12 @@ class AsyncBot(object):
             chatId: str,
             msgId: int
     ) -> ClientResponse:
-
+        """
+        Метод для закрепления сообщения в чате
+        :param chatId: ID чата
+        :param msgId: ID сообщения
+        :return: результат запроса
+        """
         return await self.get(
             path="chats/pinMessage",
             chatId=chatId,
