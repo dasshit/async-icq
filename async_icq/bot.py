@@ -98,6 +98,7 @@ class AsyncBot(object):
         self.loop.run_until_complete(self.start_session())
 
         BaseBotMiddleware.bot = self
+        Event.bot = self
 
     async def start_session(self):
         """
@@ -107,7 +108,7 @@ class AsyncBot(object):
         self.session: aiohttp.ClientSession = aiohttp.ClientSession(
             base_url=self.url,
             raise_for_status=True,
-            timeout=aiohttp.ClientTimeout(total=self.pollTime)
+            timeout=aiohttp.ClientTimeout(total=self.pollTime + 5)
         )
 
     async def get(self, path: str, **kwargs) -> ClientResponse:
@@ -191,9 +192,9 @@ class AsyncBot(object):
             self,
             chatId: str,
             text: str,
-            replyMsgId: Optional[List[int]] = None,
+            replyMsgId: Optional[List[str]] = None,
             forwardChatId: Optional[str] = None,
-            forwardMsgId: Optional[List[int]] = None,
+            forwardMsgId: Optional[List[str]] = None,
             inlineKeyboardMarkup: Union[
                 List[List[Dict[str, str]]], InlineKeyboardMarkup, None] = None,
             _format: Union[Format, List[Dict], str, None] = None,
@@ -784,7 +785,7 @@ class AsyncBot(object):
     async def pin_msg(
             self,
             chatId: str,
-            msgId: int
+            msgId: str
     ) -> ClientResponse:
         """
         Метод для закрепления сообщения в чате
@@ -794,6 +795,23 @@ class AsyncBot(object):
         """
         return await self.get(
             path="chats/pinMessage",
+            chatId=chatId,
+            msgId=msgId,
+        )
+
+    async def unpin_msg(
+            self,
+            chatId: str,
+            msgId: str
+    ) -> ClientResponse:
+        """
+        Метод для закрепления сообщения в чате
+        :param chatId: ID чата
+        :param msgId: ID сообщения
+        :return: результат запроса
+        """
+        return await self.get(
+            path="chats/unpinMessage",
             chatId=chatId,
             msgId=msgId,
         )
@@ -834,7 +852,7 @@ class AsyncBot(object):
     async def handle_wrapper(self, handler, event: Event):
 
         try:
-            await handler(self, event)
+            await handler(event)
         except Exception as error:
             await self.logger.exception(error)
 
@@ -913,7 +931,7 @@ class AsyncBot(object):
                     asyncio.exceptions.TimeoutError,
                     aiohttp.client_exceptions.ServerTimeoutError
             ) as error:
-                await self.logger.error(error)
+                await self.logger.exception(error)
 
     def start_poll(self, threaded: bool = False):
         """

@@ -6,12 +6,14 @@ from async_icq.bot import AsyncBot
 from async_icq.events import Event
 from async_icq.helpers import InlineKeyboardMarkup, KeyboardButton
 
+from aiologger.levels import LogLevel
+
 from middleware_example import AuthMiddleWare
 
 
 testbot = AsyncBot(
-    token='TOKEN',
-    url='https://api.icq.net',
+    token='001.2002552977.3511691778:1000002608',
+    url='https://api.internal.myteam.mail.ru',
     middlewares=[
         AuthMiddleWare(
             '1@chat.agent',
@@ -19,16 +21,17 @@ testbot = AsyncBot(
             'test.user.1@corp.mail.ru',
         )
     ],
+    log_level=LogLevel.DEBUG
 )
 
 
 @testbot.message_handler()
-async def hello(bot: AsyncBot, event: Event):
+async def hello(event: Event):
 
     try:
         timer = random.randint(5, 10)
 
-        await bot.logger.debug(
+        await event.log(
             f'Starting await {timer} seconds after msg "{event.text}"')
 
         await asyncio.sleep(timer)
@@ -49,26 +52,41 @@ async def hello(bot: AsyncBot, event: Event):
             )
         )
 
-        await bot.send_text(
+        await event.bot.send_text(
             chatId=event.chat.chatId,
             text=f'Test {timer} secs',
             inlineKeyboardMarkup=markup
         )
 
-        await bot.logger.debug(
+        await event.answer(
+            text=f'Test {timer} secs',
+            inlineKeyboardMarkup=markup
+        )
+
+        await event.reply_msg(
+            text=f'Test {timer} secs',
+            inlineKeyboardMarkup=markup
+        )
+
+        await event.forward_msg(
+            text=f'Test {timer} secs',
+            forwardChatId=event.chat.chatId,
+            inlineKeyboardMarkup=markup
+        )
+
+        await event.log(
             f'Ending await {timer} seconds after msg "{event.text}"')
     except Exception as error:
-        await bot.logger.exception(error)
+        await event.bot.logger.exception(error)
 
 
 @testbot.callback()
-async def callback(bot: AsyncBot, event: Event):
+async def callback(event: Event):
 
-    await bot.logger.debug(f'Callback {event.data}')
+    await event.log(f'Callback {event.data}')
 
-    await bot.answer_callback_query(
-        queryId=event.queryId,
-        text=event.callbackData
+    await event.answer_callback(
+        text=f'{event.callbackData}|{event.from_.userId}'
     )
 
 
