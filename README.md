@@ -20,7 +20,7 @@ This library provides complete ICQ/Myteam Bot API 1.0 interface and requires Pyt
 * Create your own bot by sending the /newbot command to <a href="https://icq.com/people/70001">Metabot</a> and follow the instructions.
     >Note: a bot can only reply after the user has added it to his contact list, or if the user was the first to start a dialogue.
 * You can configure the domain that hosts your ICQ server. When instantiating the Bot class, add the address of your domain.
-    > Example: Bot(token=TOKEN, url="https://api.icq.net"), by default we use the domain: https://api.icq.net/bot/v1 (ICQ) or http://myteam.mail.ru (VK Teams)
+    > Example: Bot(token=TOKEN, url="https://api.icq.net"), by default we use the domain: https://api.icq.net (ICQ) or http://myteam.mail.ru (VK Teams)
 
 # Installing
 
