@@ -53,8 +53,9 @@ example = AsyncBot(
 
 # Adding some basic event handler by decorators (handler must accept 2 arguments: bot and event)
 # Diffent decorators will set it up for diffent types of events
-@example.start_handler()
+@example.message_handler()
 async def hello(bot: AsyncBot, event: Event):
+  
   await bot.send_text(
     chatId=event.chat.chatId,
     text=f'Hi, {event.from_.userId}'
