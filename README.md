@@ -60,7 +60,8 @@ async def hello(bot: AsyncBot, event: Event):
     text=f'Hi, {event.from_.userId}'
   )
 
-  await bot.logger.debug(f'Answered to {event.chat.chatId} to {event.from_.userId}')
+  await bot.logger.debug(
+    f'Answered to {event.chat.chatId} to {event.from_.userId}')
 
 
 # Starting to poll new events and sending them to middleware and handlers
