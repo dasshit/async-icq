@@ -1,5 +1,16 @@
 # Async ICQ/VK Teams bot API wrapper
 
+<img src="https://img.shields.io/pypi/v/async_icq">
+<img src="https://img.shields.io/pypi/status/async_icq?color=green&label=stable">
+<img src="https://img.shields.io/pypi/pyversions/async_icq">
+<img src="https://img.shields.io/pypi/dm/async_icq">
+<img src="https://img.shields.io/github/license/dasshit/async-icq">
+<img src="https://img.shields.io/github/repo-size/dasshit/async-icq">
+<img src="https://img.shields.io/github/stars/dasshit?style=social">
+
+<br>
+<br>
+
 <img src="https://github.com/mail-ru-im/bot-python/blob/master/logo.png" width="100" height="100">
 
 Pure Async Python interface for Bot API.
