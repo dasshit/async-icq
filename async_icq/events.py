@@ -2,9 +2,9 @@ from enum import Enum, unique
 
 from aiohttp import ClientResponse
 
-from typing import Dict, List, Optional, Union, Any
+from typing import Dict, List, Optional, Union
 
-from .bot import AsyncBot
+# from .bot import AsyncBot
 from .helpers import InlineKeyboardMarkup, Format
 
 
@@ -52,7 +52,7 @@ class UserInfo(object):
 
 class Event(object):
 
-    bot: Optional[AsyncBot] = None
+    bot = None
 
     def __init__(self, type_, data):
         super(Event, self).__init__()
