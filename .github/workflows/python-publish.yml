@@ -17,7 +17,7 @@ jobs:
   tests:
     strategy:
       matrix:
-        python-version: [ '3.7.x', '3.8.x', '3.9.x', '3.10.x', 'pypy-3.7', 'pypy-3.8' ]
+        python-version: [ '3.7.x', '3.8.x', '3.9.x', '3.10.x', 'pypy-3.7.x', 'pypy-3.8.x', 'pypy-3.9.x', 'pypy-3.10.x' ]
     runs-on: ubuntu-latest
 
     steps:
