@@ -4,7 +4,7 @@ from aiohttp import ClientResponse
 
 from typing import Dict, List, Optional, Union, Any
 
-# from .bot import AsyncBot
+from .bot import AsyncBot
 from .helpers import InlineKeyboardMarkup, Format
 
 
@@ -52,7 +52,7 @@ class UserInfo(object):
 
 class Event(object):
 
-    bot = None
+    bot: Optional[AsyncBot] = None
 
     def __init__(self, type_, data):
         super(Event, self).__init__()
@@ -258,6 +258,31 @@ class Event(object):
             text=text,
             showAlert=showAlert,
             url=url
+        )
+
+    async def block_member(
+            self,
+            delLastMessages: bool = True
+    ) -> ClientResponse:
+        """
+        Блокировка автора события в чате
+        :param delLastMessages: Удалить ли сообщения пользователя в чате
+        :return: результат запроса
+        """
+        return await self.bot.block_user(
+            chatId=self.chat.chatId,
+            userId=self.from_.userId,
+            delLastMessages=delLastMessages
+        )
+
+    async def delete_member(self) -> ClientResponse:
+        """
+        Удаление автора события
+        :return: результат запроса
+        """
+        return await self.bot.delete_members(
+            chatId=self.chat.chatId,
+            members=[self.from_.userId]
         )
 
     async def log(self, msg: Optional[str] = None):
