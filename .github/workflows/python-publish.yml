@@ -55,7 +55,7 @@ jobs:
           TOKEN: ${{ secrets.TOKEN }}
           API_URL: ${{ secrets.API_URL }}
           ADMIN_CHAT_ID: ${{ secrets.ADMIN_CHAT_ID }}
-        run: python -m pytest --asyncio-mode=strict --import-mode=append --verbose tests/
+        run: python -m pytest --asyncio-mode=strict --import-mode=append --verbose --numprocesses=8 tests/
   deploy:
     needs: tests
 
