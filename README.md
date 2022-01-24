@@ -31,7 +31,7 @@ pip install -U async-icq
 
 Install from sources:
 ```bash
-git clone https://github.com/mail-ru-im/bot-python.git
+git clone https://github.com/dasshit/async-icq.git
 cd async-icq
 python setup.py install
 ```
