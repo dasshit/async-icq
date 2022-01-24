@@ -3,6 +3,8 @@ import io
 import json
 import asyncio
 
+from uuid import uuid4
+
 import aiohttp
 
 from aiohttp import ClientResponse
@@ -118,6 +120,13 @@ class AsyncBot(object):
         BaseBotMiddleware.bot = self
         Event.bot = self
 
+    def get_request_id(self) -> str:
+        """
+        Метод для создания уникального uuid запроса
+        :return: уникальный uuid запроса
+        """
+        return str(uuid4())
+
     async def start_session(self):
         """
         Функция создания асинхронной сессии
@@ -136,6 +145,9 @@ class AsyncBot(object):
         :param kwargs: параметры GET-запроса
         :return: ответ сервера
         """
+
+        request_id = self.get_request_id()
+
         params = {
             'token': self.token
         }
@@ -148,7 +160,7 @@ class AsyncBot(object):
                 params.pop(key)
 
         await self.logger.debug(
-            f'[GET] /bot/v1/{path} params - {kwargs} ->'
+            f'[GET][{request_id}] /bot/v1/{path} params - {kwargs} ->'
         )
 
         response = await self.session.get(
@@ -157,7 +169,7 @@ class AsyncBot(object):
             proxy=self.proxy
         )
         await self.logger.debug(
-            f'<- [{response.status}] /bot/v1/{path}'
+            f'<- [{response.status}][{request_id}] /bot/v1/{path}'
         )
         return response
 
@@ -168,6 +180,9 @@ class AsyncBot(object):
         :param kwargs: параметры POST-запроса
         :return: ответ сервера
         """
+
+        request_id = self.get_request_id()
+
         params = {
             'token': self.token
         }
@@ -180,7 +195,7 @@ class AsyncBot(object):
                 params.pop(key)
 
         self.logger.debug(
-            f'[POST] {path} kwargs - {kwargs} ->'
+            f'[POST][{request_id}] {path} kwargs - {kwargs} ->'
         )
 
         response = await self.session.post(
@@ -190,7 +205,7 @@ class AsyncBot(object):
                 proxy=self.proxy
         )
         self.logger.debug(
-            f'<- [{response.status}]'
+            f'<- [{response.status}][{request_id}]'
         )
         return response
 
