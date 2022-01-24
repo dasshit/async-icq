@@ -56,11 +56,11 @@ example = AsyncBot(
 @example.start_handler()
 async def hello(bot: AsyncBot, event: Event):
   await bot.send_text(
-    chatId=event.from_chat,
-    text=f'Hi, {event.message_author["userId"]}'
+    chatId=event.chat.chatId,
+    text=f'Hi, {event.from_.userId}'
   )
 
-  await bot.logger.debug(f'Answered to {event.from_chat}')
+  await bot.logger.debug(f'Answered to {event.chat.chatId} to {event.from_.userId}')
 
 
 # Starting to poll new events and sending them to middleware and handlers
