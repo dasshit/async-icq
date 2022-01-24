@@ -343,7 +343,7 @@ async def test_send_file(
 
     response = await prepare_bot.send_file(
         chatId=ADMIN_CHAT_ID,
-        file_path='test_methods.py',
+        file_path='pytest.ini',
         caption=caption,
         replyMsgId=replyMsgId,
         forwardChatId=forwardChatId,
