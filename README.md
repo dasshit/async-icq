@@ -1,12 +1,12 @@
 # Async ICQ/VK Teams bot API wrapper
 
-<img src="https://img.shields.io/pypi/v/async_icq">
-<img src="https://img.shields.io/pypi/status/async_icq?color=green&label=stable">
-<img src="https://img.shields.io/pypi/pyversions/async_icq">
-<img src="https://img.shields.io/pypi/dm/async_icq">
-<img src="https://img.shields.io/github/license/dasshit/async-icq">
-<img src="https://img.shields.io/github/repo-size/dasshit/async-icq">
-<img src="https://img.shields.io/github/stars/dasshit?style=social">
+[![PyPi Package Version](https://img.shields.io/pypi/v/async_icq)](https://pypi.org/project/async-icq/)
+[![PyPi Package Status](https://img.shields.io/pypi/status/async_icq?color=green&label=stable)](https://pypi.org/project/async-icq/)
+[![Supported Python versions](https://img.shields.io/pypi/pyversions/async_icq)](https://pypi.org/project/async-icq/)
+[![Package dwn stats](https://img.shields.io/pypi/dm/async_icq)](https://pypi.org/project/async-icq/)
+[![License](https://img.shields.io/github/license/dasshit/async-icq)](https://pypi.org/project/async-icq/)
+[![Repo size](https://img.shields.io/github/repo-size/dasshit/async-icq)](https://pypi.org/project/async-icq/)
+[![Author stars count](https://img.shields.io/github/stars/dasshit?style=social)](https://pypi.org/project/async-icq/)
 
 <br>
 <br>
