@@ -13,6 +13,8 @@ bot = AsyncBot(
     url=os.getenv('API_URL'),
 )
 
+msg_id: Optional[str] = None
+
 
 @pytest_asyncio.fixture
 async def prepare_bot():
@@ -20,6 +22,25 @@ async def prepare_bot():
     await bot.start_session()
 
     yield bot
+
+
+@pytest_asyncio.fixture
+async def prepare_msg(
+        prepare_bot: AsyncBot
+):
+    global msg_id
+
+    if msg_id is None:
+        response = await prepare_bot.send_text(
+            chatId=ADMIN_CHAT_ID,
+            text='Forward Test'
+        )
+
+        resp_json = await response.json()
+
+        msg_id = resp_json.get('msgId')
+
+    yield msg_id
 
 
 @pytest.mark.asyncio
@@ -61,6 +82,7 @@ async def prepare_bot():
 )
 async def test_send_text(
         prepare_bot: AsyncBot,
+        prepare_msg: Optional[str],
         text: str,
         keyboard: bool,
         fwd_or_reply: str
@@ -73,27 +95,14 @@ async def test_send_text(
 
         forwardChatId = ADMIN_CHAT_ID
 
-        response = await prepare_bot.send_text(
-            chatId=ADMIN_CHAT_ID,
-            text='Forward Test'
-        )
-
-        resp_json = await response.json()
-
         forwardMsgId = [
-            resp_json.get('msgId')
+            prepare_msg
         ]
 
     elif fwd_or_reply == 'reply':
-        response = await prepare_bot.send_text(
-            chatId=ADMIN_CHAT_ID,
-            text='Forward Test'
-        )
-
-        resp_json = await response.json()
 
         replyMsgId = [
-            resp_json.get('msgId')
+            prepare_msg
         ]
     else:
         forwardChatId = None
@@ -189,6 +198,7 @@ async def test_send_text(
 )
 async def test_send_fileId(
         prepare_bot: AsyncBot,
+        prepare_msg: Optional[str],
         fileId: str,
         caption: Optional[str],
         keyboard: bool,
@@ -202,27 +212,14 @@ async def test_send_fileId(
 
         forwardChatId = ADMIN_CHAT_ID
 
-        response = await prepare_bot.send_text(
-            chatId=ADMIN_CHAT_ID,
-            text='Forward Test'
-        )
-
-        resp_json = await response.json()
-
         forwardMsgId = [
-            resp_json.get('msgId')
+            prepare_msg
         ]
 
     elif fwd_or_reply == 'reply':
-        response = await prepare_bot.send_text(
-            chatId=ADMIN_CHAT_ID,
-            text='Forward Test'
-        )
-
-        resp_json = await response.json()
 
         replyMsgId = [
-            resp_json.get('msgId')
+            prepare_msg
         ]
     else:
         forwardChatId = None
