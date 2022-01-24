@@ -1,3 +1,5 @@
+import os
+import io
 import json
 import asyncio
 
@@ -17,6 +19,22 @@ from .events import Event, EventType
 from .helpers import InlineKeyboardMarkup, Format
 
 from .middleware import BaseBotMiddleware
+
+
+def read_file(filepath: str) -> io.BytesIO:
+
+    assert os.path.exists(filepath), f'File "{filepath}" does\'nt exist'
+    assert os.path.isfile(filepath), f'"{filepath}" is not a file'
+
+    with open(filepath, 'rb') as f:
+        file_obj = io.BytesIO(f.read())
+        file_obj.name = os.path.basename(filepath)
+        return file_obj
+
+
+async def async_read_file(filepath: str):
+    loop = asyncio.get_event_loop()
+    return await loop.run_in_executor(None, read_file, filepath)
 
 
 def keyboard_to_json(
@@ -143,7 +161,7 @@ class AsyncBot(object):
         )
         return response
 
-    async def post(self, path: str, **kwargs) -> ClientResponse:
+    async def post(self, path: str, data = None, **kwargs) -> ClientResponse:
         """
         Функция для создания и логирования POST-запроса
         :param path: относительный path запроса
@@ -156,19 +174,25 @@ class AsyncBot(object):
 
         params.update(kwargs)
 
+        for key, value in params.copy().items():
+
+            if value is None:
+                params.pop(key)
+
         self.logger.debug(
             f'[POST] {path} kwargs - {kwargs} ->'
         )
 
-        async with self.session.post(
-                url=f'{self.base_url}{path}',
+        response = await self.session.post(
+                url=f'/bot/v1/{path}',
                 params=params,
+                data=data,
                 proxy=self.proxy
-        ) as response:
-            self.logger.debug(
-                f'<- [{response.status}]'
-            )
-            return await response.json()
+        )
+        self.logger.debug(
+            f'<- [{response.status}]'
+        )
+        return response
 
     async def self_get(self,) -> ClientResponse:
         """
@@ -301,6 +325,41 @@ class AsyncBot(object):
             parseMode=parseMode if parseMode is not None else self.parseMode
         )
 
+    async def send_file(
+        self,
+        chatId: str,
+        file_path: str,
+        caption: Optional[str] = None,
+        replyMsgId: Optional[List[int]] = None,
+        forwardChatId: Optional[str] = None,
+        forwardMsgId: Optional[List[int]] = None,
+        inlineKeyboardMarkup: Union[
+                List[List[Dict[str, str]]], InlineKeyboardMarkup, None] = None,
+        _format: Union[Format, List[Dict], str, None] = None,
+        parseMode: Optional[str] = None
+    ) -> ClientResponse:
+        """
+        Метод для отправки сообщения с файлом по его file.
+        """
+        return await self.post(
+            path='messages/sendFile',
+            chatId=chatId,
+            data={'file': await async_read_file(file_path)},
+            caption=caption,
+            replyMsgId=replyMsgId,
+            forwardChatId=forwardChatId,
+            forwardMsgId=forwardMsgId,
+            inlineKeyboardMarkup=inlineKeyboardMarkup
+            if isinstance(inlineKeyboardMarkup, str)
+            else keyboard_to_json(inlineKeyboardMarkup),
+            format=_format
+            if isinstance(_format, str)
+            else format_to_json(_format),
+            parseMode=parseMode
+            if parseMode is not None
+            else self.parseMode
+        )
+
     async def send_voiceId(
             self,
             chatId: str,
@@ -345,6 +404,42 @@ class AsyncBot(object):
             inlineKeyboardMarkup=inlineKeyboardMarkup
             if isinstance(inlineKeyboardMarkup, str)
             else keyboard_to_json(inlineKeyboardMarkup),
+        )
+
+    async def send_voice(
+        self,
+        chatId: str,
+        file_path: str,
+        caption: Optional[str] = None,
+        replyMsgId: Optional[List[int]] = None,
+        forwardChatId: Optional[str] = None,
+        forwardMsgId: Optional[List[int]] = None,
+        inlineKeyboardMarkup: Union[
+                List[List[Dict[str, str]]], InlineKeyboardMarkup, None] = None,
+        _format: Union[Format, List[Dict], str, None] = None,
+        parseMode: Optional[str] = None
+    ) -> ClientResponse:
+        """
+        Метод для отправки сообщения с голосового сообщения по его file,
+        он должен быть в формате aac, ogg или m4a.
+        """
+        return await self.post(
+            path='messages/sendVoice',
+            chatId=chatId,
+            data={'file': await async_read_file(file_path)},
+            caption=caption,
+            replyMsgId=replyMsgId,
+            forwardChatId=forwardChatId,
+            forwardMsgId=forwardMsgId,
+            inlineKeyboardMarkup=inlineKeyboardMarkup
+            if isinstance(inlineKeyboardMarkup, str)
+            else keyboard_to_json(inlineKeyboardMarkup),
+            format=_format
+            if isinstance(_format, str)
+            else format_to_json(_format),
+            parseMode=parseMode
+            if parseMode is not None
+            else self.parseMode
         )
 
     async def edit_text(

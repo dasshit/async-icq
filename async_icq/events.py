@@ -4,7 +4,7 @@ from aiohttp import ClientResponse
 
 from typing import Dict, List, Optional, Union
 
-# from .bot import AsyncBot
+from .bot import AsyncBot
 from .helpers import InlineKeyboardMarkup, Format
 
 
@@ -52,7 +52,7 @@ class UserInfo(object):
 
 class Event(object):
 
-    bot = None
+    bot: Optional[AsyncBot] = None
 
     def __init__(self, type_, data):
         super(Event, self).__init__()
@@ -172,6 +172,196 @@ class Event(object):
             text=text,
             forwardChatId=self.chat.chatId,
             forwardMsgId=[self.msgId],
+            inlineKeyboardMarkup=inlineKeyboardMarkup,
+            _format=_format,
+            parseMode=parseMode
+        )
+
+    async def answer_by_fileId(
+            self,
+            fileId: str,
+            caption: Optional[str] = None,
+            replyMsgId: Optional[List[int]] = None,
+            forwardChatId: Optional[str] = None,
+            forwardMsgId: Optional[List[int]] = None,
+            inlineKeyboardMarkup: Union[
+                List[List[Dict[str, str]]], InlineKeyboardMarkup, None] = None,
+            _format: Union[Format, List[Dict], str, None] = None,
+            parseMode: Optional[str] = None
+    ):
+        """
+        Отправить в ответ на событие файл по его ID
+        :param fileId: Id ранее загруженного файла.
+        :param caption: Подпись к файлу.
+        :param replyMsgId: Id цитируемого сообщения.
+        Не может быть передано одновременно
+        с параметрами forwardChatId и forwardMsgId.
+        :param forwardChatId: Id чата, из которого будет переслано сообщение.
+        Передается только с forwardMsgId.
+        Не может быть передано с параметром replyMsgId.
+        :param forwardMsgId: Id пересылаемого сообщения.
+        Передается только с forwardChatId.
+        Не может быть передано с параметром replyMsgId.
+        :param inlineKeyboardMarkup: Это массив массивов с описанием кнопок.
+        Верхний уровень это массив строк кнопок,
+        ниже уровнем массив кнопок в конкретной строке
+        :param _format: Описание форматирования текста.
+        :param parseMode: Режим обработки форматирования из текста сообщения.
+        :return: Результат отправки сообщения. Пример:
+
+        {
+            "msgId": "57883346846815032",
+            "ok": true
+        }
+        """
+        return await self.bot.send_fileId(
+            chatId=self.chat.chatId,
+            fileId=fileId,
+            caption=caption,
+            replyMsgId=replyMsgId,
+            forwardChatId=forwardChatId,
+            forwardMsgId=forwardMsgId,
+            inlineKeyboardMarkup=inlineKeyboardMarkup,
+            _format=_format,
+            parseMode=parseMode
+        )
+
+    async def answer_by_file(
+            self,
+            file_path: str,
+            caption: Optional[str] = None,
+            replyMsgId: Optional[List[int]] = None,
+            forwardChatId: Optional[str] = None,
+            forwardMsgId: Optional[List[int]] = None,
+            inlineKeyboardMarkup: Union[
+                List[List[Dict[str, str]]], InlineKeyboardMarkup, None] = None,
+            _format: Union[Format, List[Dict], str, None] = None,
+            parseMode: Optional[str] = None
+    ):
+        """
+        Отправить в ответ на событие файл по его ID
+        :param file_path: Путь к файлу
+        :param caption: Подпись к файлу.
+        :param replyMsgId: Id цитируемого сообщения.
+        Не может быть передано одновременно
+        с параметрами forwardChatId и forwardMsgId.
+        :param forwardChatId: Id чата, из которого будет переслано сообщение.
+        Передается только с forwardMsgId.
+        Не может быть передано с параметром replyMsgId.
+        :param forwardMsgId: Id пересылаемого сообщения.
+        Передается только с forwardChatId.
+        Не может быть передано с параметром replyMsgId.
+        :param inlineKeyboardMarkup: Это массив массивов с описанием кнопок.
+        Верхний уровень это массив строк кнопок,
+        ниже уровнем массив кнопок в конкретной строке
+        :param _format: Описание форматирования текста.
+        :param parseMode: Режим обработки форматирования из текста сообщения.
+        :return: Результат отправки сообщения. Пример:
+
+        {
+            "msgId": "57883346846815032",
+            "ok": true
+        }
+        """
+        return await self.bot.send_file(
+            chatId=self.chat.chatId,
+            file_path=file_path,
+            caption=caption,
+            replyMsgId=replyMsgId,
+            forwardChatId=forwardChatId,
+            forwardMsgId=forwardMsgId,
+            inlineKeyboardMarkup=inlineKeyboardMarkup,
+            _format=_format,
+            parseMode=parseMode
+        )
+
+    async def answer_by_voiceId(
+            self,
+            fileId: str,
+            caption: Optional[str] = None,
+            replyMsgId: Optional[List[int]] = None,
+            forwardChatId: Optional[str] = None,
+            forwardMsgId: Optional[List[int]] = None,
+            inlineKeyboardMarkup: Union[
+                List[List[Dict[str, str]]], InlineKeyboardMarkup, None] = None,
+            _format: Union[Format, List[Dict], str, None] = None,
+            parseMode: Optional[str] = None
+    ):
+        """
+        Метод отправки предзагруженного голосового сообщения по его id
+        :param fileId: Id ранее загруженного файла.
+        :param replyMsgId: Id цитируемого сообщения.
+        Не может быть передано одновременно
+        с параметрами forwardChatId и forwardMsgId.
+        :param forwardChatId: Id чата, из которого будет переслано сообщение.
+        Передается только с forwardMsgId.
+        Не может быть передано с параметром replyMsgId.
+        :param forwardMsgId: Id пересылаемого сообщения.
+        Передается только с forwardChatId.
+        Не может быть передано с параметром replyMsgId.
+        :param inlineKeyboardMarkup: Это массив массивов с описанием кнопок.
+        Верхний уровень это массив строк кнопок,
+        ниже уровнем массив кнопок в конкретной строке
+        :return: Сервер вернул id сообщения. Пример:
+
+        {
+            "msgId": "57883346846815032",
+            "ok": true
+        }
+        """
+        return await self.bot.send_fileId(
+            chatId=self.chat.chatId,
+            fileId=fileId,
+            caption=caption,
+            replyMsgId=replyMsgId,
+            forwardChatId=forwardChatId,
+            forwardMsgId=forwardMsgId,
+            inlineKeyboardMarkup=inlineKeyboardMarkup,
+            _format=_format,
+            parseMode=parseMode
+        )
+
+    async def answer_by_voice(
+            self,
+            file_path: str,
+            caption: Optional[str] = None,
+            replyMsgId: Optional[List[int]] = None,
+            forwardChatId: Optional[str] = None,
+            forwardMsgId: Optional[List[int]] = None,
+            inlineKeyboardMarkup: Union[
+                List[List[Dict[str, str]]], InlineKeyboardMarkup, None] = None,
+            _format: Union[Format, List[Dict], str, None] = None,
+            parseMode: Optional[str] = None
+    ):
+        """
+        Метод отправки предзагруженного голосового сообщения по его id
+        :param file_path: Путь к файлу
+        :param replyMsgId: Id цитируемого сообщения.
+        Не может быть передано одновременно
+        с параметрами forwardChatId и forwardMsgId.
+        :param forwardChatId: Id чата, из которого будет переслано сообщение.
+        Передается только с forwardMsgId.
+        Не может быть передано с параметром replyMsgId.
+        :param forwardMsgId: Id пересылаемого сообщения.
+        Передается только с forwardChatId.
+        Не может быть передано с параметром replyMsgId.
+        :param inlineKeyboardMarkup: Это массив массивов с описанием кнопок.
+        Верхний уровень это массив строк кнопок,
+        ниже уровнем массив кнопок в конкретной строке
+        :return: Сервер вернул id сообщения. Пример:
+
+        {
+            "msgId": "57883346846815032",
+            "ok": true
+        }
+        """
+        return await self.bot.send_voice(
+            chatId=self.chat.chatId,
+            file_path=file_path,
+            caption=caption,
+            replyMsgId=replyMsgId,
+            forwardChatId=forwardChatId,
+            forwardMsgId=forwardMsgId,
             inlineKeyboardMarkup=inlineKeyboardMarkup,
             _format=_format,
             parseMode=parseMode

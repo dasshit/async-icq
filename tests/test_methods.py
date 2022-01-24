@@ -258,4 +258,99 @@ async def test_send_fileId(
     assert resp_json.get('ok')
 
 
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "caption", [
+        None,
+        "test",
+        "<code>test</code>",
+        "```test```"
+    ],
+    ids=[
+        'without caption',
+        'basic caption',
+        'html-formatted caption',
+        'backtick-formatted caption'
+    ]
+)
+@pytest.mark.parametrize(
+    'keyboard', [
+        True,
+        False
+    ],
+    ids=[
+        'with keyboard',
+        'none keyboard'
+    ]
+)
+@pytest.mark.parametrize(
+    'fwd_or_reply', [
+        None,
+        'forward',
+        'reply'
+    ],
+    ids=[
+        'nothing',
+        'with forward',
+        'with reply'
+    ]
+)
+async def test_send_file(
+        prepare_bot: AsyncBot,
+        prepare_msg: Optional[str],
+        caption: Optional[str],
+        keyboard: bool,
+        fwd_or_reply: str
+):
+    replyMsgId = None
+    forwardChatId = None
+    forwardMsgId = None
 
+    if fwd_or_reply == 'forward':
+
+        forwardChatId = ADMIN_CHAT_ID
+
+        forwardMsgId = [
+            prepare_msg
+        ]
+
+    elif fwd_or_reply == 'reply':
+
+        replyMsgId = [
+            prepare_msg
+        ]
+    else:
+        forwardChatId = None
+
+    if keyboard:
+        markup = InlineKeyboardMarkup()
+
+        markup.row(
+            KeyboardButton(
+                text='Button URL',
+                url='https://mail.ru/'
+            )
+        )
+
+        markup.row(
+            KeyboardButton(
+                text='Button callback',
+                callbackData='button|callback'
+            )
+        )
+    else:
+        markup = None
+
+    response = await prepare_bot.send_file(
+        chatId=ADMIN_CHAT_ID,
+        file_path='test_methods.py',
+        caption=caption,
+        replyMsgId=replyMsgId,
+        forwardChatId=forwardChatId,
+        forwardMsgId=forwardMsgId,
+        inlineKeyboardMarkup=markup
+    )
+
+    resp_json = await response.json()
+
+    prepare_bot.logger.warning(f'{resp_json}')
