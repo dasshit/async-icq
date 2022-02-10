@@ -10,6 +10,9 @@ from .helpers import InlineKeyboardMarkup, Format
 
 @unique
 class EventType(Enum):
+
+    __slots__ = ()
+
     NEW_MESSAGE = "newMessage"
     EDITED_MESSAGE = "editedMessage"
     DELETED_MESSAGE = "deletedMessage"
@@ -22,6 +25,11 @@ class EventType(Enum):
 
 
 class ChatInfo(object):
+
+    __slots__ = (
+        "chatId", "type", "title"
+    )
+
     def __init__(self, chatId: str, type: str, title: Optional[str] = None):
         self.chatId: str = chatId
         self.type: str = type
@@ -33,6 +41,11 @@ class ChatInfo(object):
 
 
 class UserInfo(object):
+
+    __slots__ = (
+        "userId", "firstName", "lastName", "nick"
+    )
+
     def __init__(
             self,
             userId: str,
@@ -53,6 +66,22 @@ class UserInfo(object):
 class Event(object):
 
     bot = None
+
+    __slots__ = (
+        "type",
+        "data",
+        "chat",
+        "from_",
+        "text",
+        "_format",
+        "timestamp",
+        "msgId",
+        "newMembers",
+        "addedBy",
+        "queryId",
+        "cb_message",
+        "callbackData"
+    )
 
     def __init__(self, type_, data):
         super(Event, self).__init__()

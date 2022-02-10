@@ -3,6 +3,8 @@ import io
 import json
 import asyncio
 
+import gc
+
 from uuid import uuid4
 
 import aiohttp
@@ -13,7 +15,7 @@ from aiologger import Logger
 from aiologger.levels import LogLevel
 from aiologger.formatters.base import Formatter
 
-from typing import Optional, Dict, List, Union
+from typing import Optional, Dict, List, Union, Coroutine
 
 from threading import Thread
 
@@ -73,6 +75,23 @@ def format_to_json(format_: Union[Format, List[Dict], str]):
 
 class AsyncBot(object):
 
+    __slots__ = (
+        "loop",
+        "url",
+        "session",
+        "base_url",
+        "parseMode",
+        "token",
+        "proxy",
+        "logger",
+        "running",
+        "handlers",
+        "middlewares",
+        "lastEventId",
+        "pollTime",
+        "__polling_thread"
+    )
+
     def __init__(
             self,
             token: str,
@@ -80,10 +99,12 @@ class AsyncBot(object):
             parseMode: str = 'HTML',
             proxy: Optional[str] = None,
             log_level: LogLevel = LogLevel.INFO,
-            middlewares: List[BaseBotMiddleware] = [],
+            middlewares: List[BaseBotMiddleware] = (),
             lastEventId: int = 0,
             pollTime: int = 30
     ):
+
+        # gc.disable()
 
         self.loop = asyncio.new_event_loop()
 
@@ -120,7 +141,11 @@ class AsyncBot(object):
         BaseBotMiddleware.bot = self
         Event.bot = self
 
-    def get_request_id(self) -> str:
+        # gc.freeze()
+        # gc.enable()
+
+    @staticmethod
+    def get_request_id() -> str:
         """
         Метод для создания уникального uuid запроса
         :return: уникальный uuid запроса
@@ -173,10 +198,16 @@ class AsyncBot(object):
         )
         return response
 
-    async def post(self, path: str, data = None, **kwargs) -> ClientResponse:
+    async def post(
+            self,
+            path: str,
+            data: Union[Dict[str, str], Dict[str, io.BytesIO]] = None,
+            **kwargs
+    ) -> ClientResponse:
         """
         Функция для создания и логирования POST-запроса
         :param path: относительный path запроса
+        :param data:
         :param kwargs: параметры POST-запроса
         :return: ответ сервера
         """
@@ -957,7 +988,7 @@ class AsyncBot(object):
 
             self.lastEventId = response_json['events'][-1]['eventId']
 
-        return response_json
+        return response_json['events']
 
     async def handle_wrapper(self, handler, event: Event):
 
@@ -980,10 +1011,19 @@ class AsyncBot(object):
                     result = await middleware.check(event_)
                     if result:
                         return True
-                else:
-                    if middleware.check(event_):
-                        return True
+                elif middleware.check(event_):
+                    return True
         return False
+
+    def task_check(self, event_, handler, event_type, cmd) -> Optional[Coroutine]:
+        if (event_type == event_.type and cmd is None) \
+                or \
+                (event_type == EventType.NEW_MESSAGE == event_.type \
+                 and event_.text.startswith(cmd)):
+            return self.handle_wrapper(
+                handler=handler,
+                event=event_
+            )
 
     async def start_polling(self):
         """
@@ -992,56 +1032,31 @@ class AsyncBot(object):
         """
         while self.running:
 
-            try:
-                events = await self.get_events()
-
-                events = [
-                    Event(
+            for event_ in map(
+                    lambda event: Event(
                         type_=EventType(event["type"]),
                         data=event["payload"]
+                    ),
+                    await self.get_events()
+            ):
+                await self.logger.debug(event_)
+
+                if await self.middleware_check(event_):
+                    continue
+
+                await asyncio.wait(filter(
+                    lambda x: x is not None,
+                    map(
+                        lambda x: self.task_check(
+                            event_, *x,
+                        ),
+                        self.handlers
                     )
-                    for event in events['events']
-                ]
+                ), timeout=0)
 
-                tasks = []
+                del event_
 
-                for event_ in events:
-                    await self.logger.debug(event_)
-
-                    middleware_check = await self.middleware_check(event_)
-                    if middleware_check:
-                        continue
-
-                    for handler, event_type, cmd in self.handlers:
-                        if event_type == event_.type and cmd is None:
-                            tasks.append(
-                                self.handle_wrapper(
-                                    handler=handler,
-                                    event=event_
-                                )
-                            )
-                        elif cmd is not None \
-                                and event_type == EventType.NEW_MESSAGE \
-                                and event_type == event_.type \
-                                and event_.text.startswith(cmd):
-                            tasks.append(
-                                self.handle_wrapper(
-                                    handler=handler,
-                                    event=event_
-                                )
-                            )
-                        else:
-                            await self.logger.debug(
-                                f'Passing event: {event_.type} {event_.data}'
-                            )
-
-                if tasks:
-                    await asyncio.wait(tasks, timeout=0)
-            except (
-                    asyncio.exceptions.TimeoutError,
-                    aiohttp.client_exceptions.ServerTimeoutError
-            ) as error:
-                await self.logger.exception(error)
+            gc.collect()
 
     def start_poll(self, threaded: bool = False):
         """
@@ -1108,6 +1123,7 @@ class AsyncBot(object):
         """
         Декоратор для функций обработки входящих сообщений
         :param event_type: тип события = EventType.NEW_MESSAGE
+        :param cmd:
         :return:
         """
         def decorate(handler):
@@ -1123,6 +1139,7 @@ class AsyncBot(object):
         """
         Декоратор для функций обработки входящих сообщений
         :param event_type: тип события = EventType.NEW_MESSAGE
+        :param cmd:
         :return:
         """
         def decorate(handler):
