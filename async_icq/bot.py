@@ -1,9 +1,10 @@
 import os
 import io
-import json
+import ujson as json
+import uvloop
 import asyncio
 
-import gc
+from types import MappingProxyType
 
 from uuid import uuid4
 
@@ -106,6 +107,7 @@ class AsyncBot(object):
 
         # gc.disable()
 
+        asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
         self.loop = asyncio.new_event_loop()
 
         self.session = None
@@ -152,6 +154,13 @@ class AsyncBot(object):
         """
         return str(uuid4())
 
+    @staticmethod
+    def loads(object) -> MappingProxyType:
+
+        return MappingProxyType(
+            json.loads(object)
+        )
+
     async def start_session(self):
         """
         Функция создания асинхронной сессии
@@ -160,7 +169,9 @@ class AsyncBot(object):
         self.session: aiohttp.ClientSession = aiohttp.ClientSession(
             base_url=self.url,
             raise_for_status=True,
-            timeout=aiohttp.ClientTimeout(total=self.pollTime + 5)
+            timeout=aiohttp.ClientTimeout(total=self.pollTime + 5),
+            json_serialize=json.dumps,
+            loop=self.loop,
         )
 
     async def get(self, path: str, **kwargs) -> ClientResponse:
@@ -971,6 +982,13 @@ class AsyncBot(object):
             fileId=fileId
         )
 
+    @staticmethod
+    def loads(object, *args, **kwargs) -> MappingProxyType:
+
+        return MappingProxyType(
+            json.loads(object)
+        )
+
     async def get_events(self):
         """
         Метод для поллинга событий от Bit API
@@ -982,7 +1000,9 @@ class AsyncBot(object):
             pollTime=self.pollTime
         )
 
-        response_json = await response.json()
+        response_json = await response.json(
+            loads=self.loads
+        )
 
         if response_json.get('events', []):
 
@@ -1044,19 +1064,18 @@ class AsyncBot(object):
                 if await self.middleware_check(event_):
                     continue
 
-                await asyncio.wait(filter(
-                    lambda x: x is not None,
-                    map(
-                        lambda x: self.task_check(
-                            event_, *x,
-                        ),
-                        self.handlers
-                    )
-                ), timeout=0)
-
-                del event_
-
-            gc.collect()
+                await asyncio.wait(
+                    filter(
+                        lambda x: x is not None,
+                        map(
+                            lambda x: self.task_check(
+                                event_, *x,
+                            ),
+                            self.handlers
+                        )
+                    ),
+                    timeout=0
+                )
 
     def start_poll(self, threaded: bool = False):
         """

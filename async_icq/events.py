@@ -7,6 +7,8 @@ from typing import Dict, List, Optional, Union
 # from .bot import AsyncBot
 from .helpers import InlineKeyboardMarkup, Format
 
+from types import MappingProxyType
+
 
 @unique
 class EventType(Enum):
@@ -84,10 +86,9 @@ class Event(object):
     )
 
     def __init__(self, type_, data):
-        super(Event, self).__init__()
 
         self.type = type_
-        self.data = data
+        self.data = MappingProxyType(data)
 
         if type_ != EventType.CALLBACK_QUERY:
             self.chat: ChatInfo = ChatInfo(**data['chat'])
