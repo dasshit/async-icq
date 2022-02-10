@@ -86,7 +86,8 @@ class Event(object):
             self.newMembers = [
                 UserInfo(**user) for user in data.get('newMembers', [])
             ]
-            self.addedBy = UserInfo(**data['addedBy'])
+            if data.get('addedBy'):
+                self.addedBy = UserInfo(**data['addedBy'])
         else:
             self.queryId = data['queryId']
             self.from_ = UserInfo(**data['from'])
