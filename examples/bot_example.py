@@ -80,6 +80,16 @@ async def hello(event: Event):
         await event.bot.logger.exception(error)
 
 
+@testbot.new_member_handler()
+async def new_member(event: Event):
+
+    await event.answer('Hi, ' + ', '.join(
+        [
+            f'@[{user.userId}]' for user in event.newMembers
+        ]
+    ))
+
+
 @testbot.callback()
 async def callback(event: Event):
 
