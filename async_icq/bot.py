@@ -169,6 +169,7 @@ class AsyncBot(object):
         Функция создания асинхронной сессии
         :return: None
         """
+
         self.session: aiohttp.ClientSession = aiohttp.ClientSession(
             base_url=self.url,
             raise_for_status=True,
