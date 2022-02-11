@@ -1040,6 +1040,7 @@ class AsyncBot(object):
                 or \
                 (event_type == EventType.NEW_MESSAGE == event_.type \
                  and event_.text.startswith(cmd)):
+
             return self.handle_wrapper(
                 handler=handler,
                 event=event_
