@@ -1,6 +1,9 @@
 import os
 import io
-import ujson as json
+try:
+    import ujson as json
+except ImportError:
+    import json
 import uvloop
 import asyncio
 
