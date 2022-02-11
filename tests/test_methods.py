@@ -1,6 +1,7 @@
 import os
 import pytest
 import pytest_asyncio
+import asyncio
 from typing import Optional
 from async_icq.bot import AsyncBot
 from async_icq.helpers import InlineKeyboardMarkup, KeyboardButton
@@ -11,6 +12,7 @@ ADMIN_CHAT_ID = os.getenv('ADMIN_CHAT_ID')
 bot = AsyncBot(
     token=os.getenv('TOKEN'),
     url=os.getenv('API_URL'),
+    loop=asyncio.new_event_loop()
 )
 
 msg_id: Optional[str] = None

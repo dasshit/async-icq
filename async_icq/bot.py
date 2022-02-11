@@ -102,13 +102,16 @@ class AsyncBot(object):
             log_level: LogLevel = LogLevel.INFO,
             middlewares: List[BaseBotMiddleware] = (),
             lastEventId: int = 0,
-            pollTime: int = 30
+            pollTime: int = 30,
+            loop: Optional = None
     ):
 
         # gc.disable()
-
-        asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
-        self.loop = asyncio.new_event_loop()
+        if loop is None:
+            asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
+            self.loop = asyncio.new_event_loop()
+        else:
+            self.loop = loop
 
         self.session = None
         self.url: str = url
@@ -171,7 +174,7 @@ class AsyncBot(object):
             raise_for_status=True,
             timeout=aiohttp.ClientTimeout(total=self.pollTime + 5),
             json_serialize=json.dumps,
-            loop=self.loop,
+            loop=asyncio.get_event_loop()
         )
 
     async def get(self, path: str, **kwargs) -> ClientResponse:
