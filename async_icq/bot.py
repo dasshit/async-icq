@@ -4,7 +4,6 @@ try:
     import ujson as json
 except ImportError:
     import json
-import uvloop
 import asyncio
 
 from types import MappingProxyType
@@ -111,7 +110,11 @@ class AsyncBot(object):
 
         # gc.disable()
         if loop is None:
-            asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
+            try:
+                import uvloop
+                asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
+            except ImportError:
+                pass
             self.loop = asyncio.new_event_loop()
         else:
             self.loop = loop
