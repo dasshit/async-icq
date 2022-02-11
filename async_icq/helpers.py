@@ -1,4 +1,7 @@
-import json
+try:
+    import ujson as json
+except ImportError:
+    import json
 
 from .constant import StyleType
 
@@ -24,6 +27,13 @@ class JsonDeserializable(object):
 
 class KeyboardButton(Dictionaryable, JsonSerializable):
 
+    __slots__ = (
+        "text",
+        "callbackData",
+        "style",
+        "url"
+    )
+
     def __init__(self, text: str, style: str = 'primary',
                  callbackData: str = None, url: str = None):
         self.text = text
@@ -46,6 +56,11 @@ class KeyboardButton(Dictionaryable, JsonSerializable):
 
 
 class InlineKeyboardMarkup(Dictionaryable, JsonSerializable):
+
+    __slots__ = (
+        "buttons_in_row",
+        "keyboard"
+    )
 
     def __init__(self, buttons_in_row=8):
         self.buttons_in_row = buttons_in_row
@@ -78,6 +93,10 @@ class InlineKeyboardMarkup(Dictionaryable, JsonSerializable):
 
 class Style(Dictionaryable, JsonSerializable):
 
+    __slots__ = (
+        "ranges"
+    )
+
     def __init__(self):
         self.ranges = []
 
@@ -96,6 +115,10 @@ class Style(Dictionaryable, JsonSerializable):
 
 
 class Format(Dictionaryable, JsonSerializable):
+
+    __slots__ = (
+        "styles"
+    )
 
     def __init__(self):
         self.styles = {}
