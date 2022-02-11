@@ -108,7 +108,6 @@ class AsyncBot(object):
             loop: Optional = None
     ):
 
-        # gc.disable()
         if loop is None:
             try:
                 import uvloop
