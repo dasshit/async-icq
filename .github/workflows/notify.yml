@@ -7,7 +7,7 @@ jobs:
     steps:
       - name: Hello world action step
         id: hello
-        uses: dasshit/myteam-notify@v1.1
+        uses: dasshit/myteam-notify@v1.2
         with:
           api-url: ${{ secrets.BOTAPI }}
           bot-token: ${{ secrets.BOTTOKEN }}
