@@ -993,7 +993,6 @@ class AsyncBot(object):
 
     @staticmethod
     def loads(object, *args, **kwargs) -> MappingProxyType:
-
         return MappingProxyType(
             json.loads(object)
         )
