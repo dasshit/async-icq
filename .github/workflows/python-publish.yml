@@ -28,7 +28,6 @@ jobs:
 
       - name: Switch to Current Branch
         run: git checkout ${{ env.BRANCH }}
-
       - name: Sending notification to VK Teams
         id: hello
         uses: dasshit/myteam-notify@1.2
