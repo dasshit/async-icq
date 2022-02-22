@@ -11,7 +11,7 @@
 <br>
 <br>
 
-<img src="https://github.com/mail-ru-im/bot-python/blob/master/logo.png" width="100" height="100">
+<img src="https://icq.com/botapi/res/logo_icq_new.png" width="25%"><img src="https://myteam.mail.ru/botapi/res/logo_myteam.png" width="25%">
 
 Pure Async Python interface for Bot API.
 
