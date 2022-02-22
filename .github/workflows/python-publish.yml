@@ -35,7 +35,7 @@ jobs:
           api-url: ${{ secrets.BOTAPI }}
           bot-token: ${{ secrets.BOTTOKEN }}
           chat-id: ${{ secrets.CHATID }}
-          files-path: ./async_icq/bot.py
+         # files-path: ./async_icq/bot.py
       - name: Get specific changed files
         id: changed-files-specific
         uses: tj-actions/changed-files@v13.1
