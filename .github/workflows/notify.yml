@@ -12,7 +12,6 @@ jobs:
           api-url: ${{ secrets.BOTAPI }}
           bot-token: ${{ secrets.BOTTOKEN }}
           chat-id: ${{ secrets.CHATID }}
-          msg-text: "Hello, user @[${{ secrets.CHATID }}]"
       # Use the output from the `hello` step
       - name: Get the output time
         run: echo "The time was ${{ steps.hello.outputs.time }}"
