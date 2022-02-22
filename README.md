@@ -8,10 +8,7 @@
 [![Repo size](https://img.shields.io/github/repo-size/dasshit/async-icq)](https://pypi.org/project/async-icq/)
 [![Author stars count](https://img.shields.io/github/stars/dasshit?style=social)](https://pypi.org/project/async-icq/)
 
-<br>
-<br>
-
-<img src="https://icq.com/botapi/res/logo_icq_new.png" width="25%"><img src="https://myteam.mail.ru/botapi/res/logo_myteam.png" width="25%">
+<img src="https://icq.com/botapi/res/logo_icq_new.png" width="40%"><img src="https://myteam.mail.ru/botapi/res/logo_myteam.png" width="40%">
 
 Pure Async Python interface for Bot API.
 
