@@ -31,7 +31,7 @@ jobs:
 
       - name: Sending notification to VK Teams
         id: hello
-        uses: dasshit/myteam-notify@v1.2
+        uses: dasshit/myteam-notify@1.2
         with:
           api-url: ${{ secrets.BOTAPI }}
           bot-token: ${{ secrets.BOTTOKEN }}
