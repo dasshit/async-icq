@@ -16,10 +16,11 @@ Pure Async Python interface for Bot API.
 - [Introduction](#introduction)
 - [Quick start](#quick-start)
 - [Installing](#installing)
-- [Examples](#examples)
+- [Examples](#examples) 
 - [API description](#api-description)
 
 # Introduction
+
 
 This library provides complete ICQ/Myteam Bot API 1.0 interface and requires Python 3.5+
 
