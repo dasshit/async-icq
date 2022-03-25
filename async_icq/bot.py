@@ -129,7 +129,6 @@ class AsyncBot(object):
         self.logger = Logger.with_default_handlers(
             name='async-icq',
             formatter=Formatter(
-                '%(asctime)s - '
                 '%(name)s - '
                 '%(levelname)s - '
                 '%(module)s:%(funcName)s:%(lineno)d - '
