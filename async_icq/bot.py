@@ -216,7 +216,7 @@ class AsyncBot(object):
             proxy=self.proxy
         )
         await self.logger.debug(
-            f'<- [{response.status}][{request_id}] /bot/v1/{path}'
+            f'[{response.status}] <- [{request_id}] /bot/v1/{path}'
         )
         return response
 
