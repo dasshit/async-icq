@@ -1044,15 +1044,36 @@ class AsyncBot(object):
         return False
 
     def task_check(self, event_, handler, event_type, cmd) -> Optional[Coroutine]:
-        if (event_type == event_.type and cmd is None) \
-                or \
-                (event_type == EventType.NEW_MESSAGE == event_.type \
-                 and event_.text.startswith(cmd)):
+        try:
+            if (event_type == event_.type and cmd is None) \
+                    or \
+                    (event_type == EventType.NEW_MESSAGE == event_.type \
+                     and event_.text.startswith(cmd)):
+                return self.handle_wrapper(
+                    handler=handler,
+                    event=event_
+                )
+        except Exception:
+            pass
 
-            return self.handle_wrapper(
-                handler=handler,
-                event=event_
-            )
+    async def process_event(self, event: Event):
+
+        await self.logger.debug(event)
+
+        if await self.middleware_check(event):
+            yield
+
+        for part in filter(
+                    lambda x: x is not None,
+                    map(
+                        lambda x: self.task_check(
+                            event, *x,
+                        ),
+                        self.handlers
+                    )
+                ):
+
+           yield part
 
     async def start_polling(self):
         """
@@ -1061,30 +1082,27 @@ class AsyncBot(object):
         """
         while self.running:
 
-            for event_ in map(
-                    lambda event: Event(
-                        type_=EventType(event["type"]),
-                        data=event["payload"]
-                    ),
-                    await self.get_events()
-            ):
-                await self.logger.debug(event_)
+            try:
 
-                if await self.middleware_check(event_):
-                    continue
+                await asyncio.wait([
+                    proccessed_event for event_ in map(
+                        lambda event: Event(
+                            type_=EventType(event["type"]),
+                            data=event["payload"]
+                        ),
+                        await self.get_events()
+                    ) async for proccessed_event in self.process_event(event_)
+                ])
 
-                await asyncio.wait(
-                    filter(
-                        lambda x: x is not None,
-                        map(
-                            lambda x: self.task_check(
-                                event_, *x,
-                            ),
-                            self.handlers
-                        )
-                    ),
-                    timeout=0
-                )
+            except ValueError:
+                continue
+
+            except KeyboardInterrupt as error:
+                await self.logger.info(f'Stopping bot after {type(error)}')
+                break
+
+            except Exception as error:
+                await self.logger.exception(error)
 
     def start_poll(self, threaded: bool = False):
         """
