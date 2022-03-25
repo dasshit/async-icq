@@ -89,6 +89,7 @@ class AsyncBot(object):
         "logger",
         "running",
         "handlers",
+        "help",
         "middlewares",
         "lastEventId",
         "pollTime",
@@ -139,6 +140,7 @@ class AsyncBot(object):
 
         self.running = True
         self.handlers: List = []
+        self.help: List = []
         self.middlewares: List[BaseBotMiddleware] = middlewares
 
         self.lastEventId = lastEventId
@@ -1044,6 +1046,7 @@ class AsyncBot(object):
         return False
 
     def task_check(self, event_, handler, event_type, cmd) -> Optional[Coroutine]:
+
         try:
             if (event_type == event_.type and cmd is None) \
                     or \
@@ -1062,6 +1065,14 @@ class AsyncBot(object):
 
         if await self.middleware_check(event):
             yield
+
+        if event.text is not None:
+            if event.text == '/help':
+                yield self.handle_wrapper(
+                    handler=self.help_info,
+                    event=event
+                )
+                return
 
         for part in filter(
                     lambda x: x is not None,
@@ -1104,6 +1115,14 @@ class AsyncBot(object):
             except Exception as error:
                 await self.logger.exception(error)
 
+    async def help_info(self, event: Event):
+
+        text = "Возможные команды:\n\n" + '\n'.join([
+            f"<pre>{cmd} - {info}</pre>" for cmd, info in self.help
+        ])
+
+        await event.answer(text)
+
     def start_poll(self, threaded: bool = False):
         """
         Перегрузка функции поллинга и обрабоки событий
@@ -1112,6 +1131,9 @@ class AsyncBot(object):
         или запустить побочный
         :return:
         """
+
+        self.add_handler([self.help_info, EventType.NEW_MESSAGE, '/help'])
+
         if threaded:
 
             self.__polling_thread = Thread(
@@ -1133,6 +1155,52 @@ class AsyncBot(object):
         """
         if asyncio.iscoroutinefunction(handler[0]):
             self.handlers.append(handler)
+            if handler[0].__doc__:
+                if handler[1] == EventType.NEW_MESSAGE:
+                    self.help.append([
+                        "Любое сообщение" if handler[2] is None else handler[2],
+                        handler[0].__doc__.strip()
+                    ])
+                elif handler[1] == EventType.EDITED_MESSAGE:
+                    self.help.append([
+                        "Редактирование любого сообщения",
+                        handler[0].__doc__.strip()
+                    ])
+                elif handler[1] == EventType.DELETED_MESSAGE:
+                    self.help.append([
+                        "Удаление сообщения в чате",
+                        handler[0].__doc__.strip()
+                    ])
+                elif handler[1] == EventType.CALLBACK_QUERY:
+                    self.help.append([
+                        "Нажатие на ботокнопку",
+                        handler[0].__doc__.strip()
+                    ])
+                elif handler[1] == EventType.PINNED_MESSAGE:
+                    self.help.append([
+                        "Закрепление сообщения в чате",
+                        handler[0].__doc__.strip()
+                    ])
+                elif handler[1] == EventType.UNPINNED_MESSAGE:
+                    self.help.append([
+                        "Открепление сообщения в чате",
+                        handler[0].__doc__.strip()
+                    ])
+                elif handler[1] == EventType.NEW_CHAT_MEMBERS:
+                    self.help.append([
+                        "Добавление нового участника в чат",
+                        handler[0].__doc__.strip()
+                    ])
+                elif handler[1] == EventType.LEFT_CHAT_MEMBERS:
+                    self.help.append([
+                        "Удаление участника в чат",
+                        handler[0].__doc__.strip()
+                    ])
+                elif handler[1] == EventType.CHANGED_CHAT_INFO:
+                    self.help.append([
+                        "Изменение информации о чате",
+                        handler[0].__doc__.strip()
+                    ])
         else:
             raise ValueError(
                 f'Added unsupported sync event handler: {handler[0].__name__}'
