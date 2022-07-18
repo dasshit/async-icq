@@ -147,7 +147,7 @@ class AsyncBot(object):
 
         self.__polling_thread: Optional[Thread] = None
 
-        self.loop.run_until_complete(self.start_session())
+        # self.loop.run_until_complete(self.start_session())
 
         BaseBotMiddleware.bot = self
         Event.bot = self
@@ -170,20 +170,6 @@ class AsyncBot(object):
             json.loads(object)
         )
 
-    async def start_session(self):
-        """
-        Функция создания асинхронной сессии
-        :return: None
-        """
-
-        self.session: aiohttp.ClientSession = aiohttp.ClientSession(
-            base_url=self.url,
-            raise_for_status=True,
-            timeout=aiohttp.ClientTimeout(total=self.pollTime + 5),
-            json_serialize=json.dumps,
-            loop=asyncio.get_event_loop()
-        )
-
     async def get(self, path: str, **kwargs) -> ClientResponse:
         """
         Функция для создания и логирования GET-запроса
@@ -191,6 +177,16 @@ class AsyncBot(object):
         :param kwargs: параметры GET-запроса
         :return: ответ сервера
         """
+
+        if self.session is None:
+            self.session: aiohttp.ClientSession = aiohttp.ClientSession(
+                base_url=self.url,
+                raise_for_status=True,
+                timeout=aiohttp.ClientTimeout(total=self.pollTime + 5),
+                json_serialize=json.dumps,
+                loop=asyncio.get_event_loop(),
+                connector=aiohttp.TCPConnector(verify_ssl=False)
+            )
 
         request_id = self.get_request_id()
 
@@ -232,6 +228,16 @@ class AsyncBot(object):
         :param kwargs: параметры POST-запроса
         :return: ответ сервера
         """
+
+        if self.session is None:
+            self.session: aiohttp.ClientSession = aiohttp.ClientSession(
+                base_url=self.url,
+                raise_for_status=True,
+                timeout=aiohttp.ClientTimeout(total=self.pollTime + 5),
+                json_serialize=json.dumps,
+                loop=asyncio.get_event_loop(),
+                connector=aiohttp.TCPConnector(verify_ssl=False)
+            )
 
         request_id = self.get_request_id()
 
