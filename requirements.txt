@@ -9,4 +9,4 @@ idna>=3.3
 multidict>=5.2.0
 yarl>=1.7.2
 uvloop==0.16.0
-ujson==5.1.0
+ujson==5.4.0
