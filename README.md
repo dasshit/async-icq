@@ -85,3 +85,5 @@ Example of how to use this library could be found in async-icq/examples
     <li><a href="https://agent.mail.ru/botapi/">agent.mail.ru/botapi/</a></li>
     <li><a href="https://myteam.mail.ru/botapi/">myteam.mail.ru/botapi/</a></li>
 </ul>
+
+Valera popa
