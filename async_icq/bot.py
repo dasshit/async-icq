@@ -1080,16 +1080,15 @@ class AsyncBot(object):
                 return
 
         for part in filter(
-                    lambda x: x is not None,
-                    map(
-                        lambda x: self.task_check(
-                            event, *x,
-                        ),
-                        self.handlers
-                    )
-                ):
-
-           yield part
+                lambda x: x is not None,
+                map(
+                    lambda x: self.task_check(
+                        event, *x,
+                    ),
+                    self.handlers
+                )
+        ):
+            yield part
 
     async def start_polling(self):
         """
@@ -1099,16 +1098,13 @@ class AsyncBot(object):
         while self.running:
 
             try:
-
-                await asyncio.wait([
-                    proccessed_event for event_ in map(
-                        lambda event: Event(
-                            type_=EventType(event["type"]),
-                            data=event["payload"]
-                        ),
-                        await self.get_events()
-                    ) async for proccessed_event in self.process_event(event_)
-                ])
+                for event_ in await self.get_events():
+                    event__ = Event(
+                        type_=EventType(event_["type"]),
+                        data=event_["payload"]
+                    )
+                    async for proccessed_event in self.process_event(event__):
+                        await proccessed_event
 
             except ValueError:
                 continue
