@@ -89,6 +89,7 @@ class Event(object):
 
         self.type = type_
         self.data = MappingProxyType(data)
+        self.text: str = data.get('text')
 
         if type_ != EventType.CALLBACK_QUERY:
             self.chat: ChatInfo = ChatInfo(**data['chat'])
@@ -99,7 +100,6 @@ class Event(object):
             EventType.PINNED_MESSAGE
         ]:
             self.from_: UserInfo = UserInfo(**data['from'])
-            self.text: str = data.get('text')
             self._format: Dict[str, List[Dict[str, int]]] = data.get('format')
             self.timestamp: int = data.get('timestamp')
             self.msgId: str = data.get('msgId')
