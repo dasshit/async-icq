@@ -12,7 +12,7 @@ from uuid import uuid4
 
 import aiohttp
 
-from aiohttp import ClientResponse
+from aiohttp import ClientResponse, FormData
 
 from aiologger import Logger
 from aiologger.levels import LogLevel
@@ -218,7 +218,7 @@ class AsyncBot(object):
     async def post(
             self,
             path: str,
-            data: Union[Dict[str, str], Dict[str, io.BytesIO]] = None,
+            data: Union[FormData, Dict[str, str], Dict[str, io.BytesIO]] = None,
             **kwargs
     ) -> ClientResponse:
         """
@@ -406,18 +406,22 @@ class AsyncBot(object):
         replyMsgId: Optional[List[int]] = None,
         forwardChatId: Optional[str] = None,
         forwardMsgId: Optional[List[int]] = None,
-        inlineKeyboardMarkup: Union[
-                List[List[Dict[str, str]]], InlineKeyboardMarkup, None] = None,
+        inlineKeyboardMarkup: Union[List[List[Dict[str, str]]], InlineKeyboardMarkup, None] = None,
         _format: Union[Format, List[Dict], str, None] = None,
-        parseMode: Optional[str] = None
+        parseMode: Optional[str] = None,
+        filename: Optional[str] = None
     ) -> ClientResponse:
         """
         Метод для отправки сообщения с файлом по его file.
         """
+        data = FormData()
+        data.add_field('file',
+                       await async_read_file(file_path),
+                       filename=filename or os.path.basename(file_path))
         return await self.post(
             path='messages/sendFile',
             chatId=chatId,
-            data={'file': await async_read_file(file_path)},
+            data=data,
             caption=caption,
             replyMsgId=replyMsgId,
             forwardChatId=forwardChatId,
