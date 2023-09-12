@@ -801,7 +801,7 @@ class AsyncBot(object):
         :return: Список пользователей чата
         """
         return await self.get(
-            path="chats/getAdmins",
+            path="chats/getMembers",
             chatId=chatId,
             cursor=cursor
         )
