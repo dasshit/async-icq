@@ -414,7 +414,7 @@ class AsyncBot(object):
         """
         Метод для отправки сообщения с файлом по его file.
         """
-        data = FormData()
+        data = FormData(quote_fields=False)
         data.add_field('file',
                        await async_read_file(file_path),
                        filename=filename or os.path.basename(file_path))
