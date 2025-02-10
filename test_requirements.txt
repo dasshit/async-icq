@@ -9,7 +9,7 @@ charset-normalizer==2.0.10
 colorama==0.4.4
 docutils==0.18.1
 frozenlist==1.2.0
-idna==3.3
+idna==3.7
 importlib-metadata==4.10.1
 iniconfig==1.1.1
 keyring==23.5.0
